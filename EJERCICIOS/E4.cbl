@@ -6,7 +6,7 @@
       * son iguales emitir un mensaje.
       ******************************************************************
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. E3.
+       PROGRAM-ID. E4.
        DATA DIVISION.
        FILE SECTION.
        WORKING-STORAGE SECTION.
@@ -40,4 +40,4 @@
            END-IF
            .
        200-PROCESS-F.
-       END PROGRAM E3.
+       END PROGRAM E4.
