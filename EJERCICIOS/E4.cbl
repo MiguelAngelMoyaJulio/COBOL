@@ -3,7 +3,7 @@
       * Date: 2022-09-06
       * Dados dos valores numéricos, informar cual es el mayor y 
       * cual es el menor o, si ambos valores 
-      * son iguales emitir un mensaje.
+      * son iguales emitir un mensaje
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. E4.
