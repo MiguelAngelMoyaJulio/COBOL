@@ -14,6 +14,7 @@
       *todos los años.
       *2.	Cuántos nacimientos hubo antes del 9 de julio de 1990.
       *3.	Cuántos nacimientos de mujeres hubo en la primavera del 1982
+      *4.	Sexo de la persona más vieja (solo existe una).
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. E18.
@@ -38,7 +39,7 @@
                05 WS-A                 PIC 9(04).
            77 WS-STATUS                PIC X(01).
            77 WS-OLDER-PERSON          PIC X(01).
-           77 WS-KK          PIC 9(05).
+           77 WS-KK                    PIC 9(05).
            77 WS-AMOUNT-OCTOBER        PIC 9(05).
            77 WS-AMOUNT-SPECIAL        PIC 9(05).
            77 WS-AMOUNT-SPRING         PIC 9(05).
@@ -51,6 +52,11 @@
            PERFORM 20-LEER
            THRU 20-LEER-F
            MOVE "Y" TO WS-STATUS
+           
+           MOVE REG-DIA TO WS-D
+           MOVE REG-MES TO WS-M
+           MOVE REG-ANIO TO WS-A
+           MOVE REG-SEXO TO WS-OLDER-PERSON
            
            PERFORM 30-CALCULO
            THRU 30-CALCULO-F
@@ -95,13 +101,35 @@
                IF REG-MES = 9 AND REG-DIA >= 21 AND REG-DIA <= 30
                    ADD 1 TO WS-AMOUNT-SPRING
                ELSE
-                   IF REG-MES > 9 AND REG-MES < 12
+                   IF REG-MES >= 10 AND REG-MES <= 11
                        ADD 1 TO WS-AMOUNT-SPRING
                    ELSE
                        IF REG-MES = 12 AND REG-DIA >= 1 
                            AND REG-DIA <= 21
                                ADD 1 TO WS-AMOUNT-SPRING
                        END-IF        
+                   END-IF
+               END-IF
+           END-IF
+
+           IF REG-ANIO < WS-A
+               MOVE REG-DIA TO WS-D
+               MOVE REG-MES TO WS-M
+               MOVE REG-ANIO TO WS-A
+               MOVE REG-SEXO TO WS-OLDER-PERSON
+           ELSE
+               IF REG-ANIO = WS-A AND REG-MES < WS-M
+                   MOVE REG-DIA TO WS-D
+                   MOVE REG-MES TO WS-M
+                   MOVE REG-ANIO TO WS-A
+                   MOVE REG-SEXO TO WS-OLDER-PERSON
+               ELSE
+                   IF REG-ANIO = WS-A AND REG-MES = WS-M 
+                      AND REG-DIA < WS-D
+                       MOVE REG-DIA TO WS-D
+                       MOVE REG-MES TO WS-M
+                       MOVE REG-ANIO TO WS-A
+                       MOVE REG-SEXO TO WS-OLDER-PERSON
                    END-IF
                END-IF
            END-IF
@@ -112,9 +140,10 @@
        30-CALCULO-F. EXIT. 
 
        40-TOTALES. 
-           DISPLAY "AMOUNT OF BIRTHS ON OCTOBER " WS-AMOUNT-OCTOBER                  
-           DISPLAY "AMOUNT SPECIAL " WS-AMOUNT-SPECIAL                  
-           DISPLAY "AMOUNT ON SPRING " WS-AMOUNT-SPRING                  
+           DISPLAY "TOTAL OF BIRTHS ON OCTOBER " WS-AMOUNT-OCTOBER                  
+           DISPLAY "TOTAL SUBSECTION 2 " WS-AMOUNT-SPECIAL                  
+           DISPLAY "TOTAL OF WOMEN's BIRTHS ON SPRING " WS-AMOUNT-SPRING                  
+           DISPLAY "SEX'S OLDEST PERSON " WS-OLDER-PERSON                  
            .           
        40-TOTALES-F. EXIT.
        END PROGRAM E18.
