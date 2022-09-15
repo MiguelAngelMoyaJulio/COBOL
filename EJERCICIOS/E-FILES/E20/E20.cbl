@@ -1,8 +1,7 @@
       ******************************************************************
       * Author: MIGUEL MOYA
       * Date: 2022-09-07
-      *Ingresar un valor entero N (< 25). A continuación ingresar un 
-      *conjunto VEC de N componentes. Si la
+      *Crear un de VEC de 25 componentes. Si la
       *suma de las componentes resulta mayor que 900 imprimir 
       *las de índice par, sino las de índice impar.
       ******************************************************************
