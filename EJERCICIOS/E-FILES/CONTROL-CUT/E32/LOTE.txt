@@ -1,0 +1,101 @@
+01bar               
+01bar               
+01biblioteca        
+01biblioteca        
+01biblioteca        
+01museo             
+01museo             
+01museo             
+01parque            
+01plaza             
+01plaza             
+01plaza             
+01plaza             
+02bar               
+02biblioteca        
+02biblioteca        
+02biblioteca        
+02centro comunitario
+02centro comunitario
+02centro comunitario
+02museo             
+02museo             
+02museo             
+02parque            
+02parque            
+02plaza             
+02plaza             
+02plaza             
+03bar               
+03biblioteca        
+03biblioteca        
+03biblioteca        
+03biblioteca        
+03biblioteca        
+03museo             
+03museo             
+03parque            
+03plaza             
+03plaza             
+03plaza             
+03plaza             
+03plaza             
+03plaza             
+04bar               
+04bar               
+04biblioteca        
+04biblioteca        
+04biblioteca        
+04centro comunitario
+04centro comunitario
+04centro comunitario
+04centro comunitario
+04museo             
+04parque            
+04plaza             
+04plaza             
+04plaza             
+05bar               
+05bar               
+05centro comunitario
+05centro comunitario
+05centro comunitario
+05museo             
+05museo             
+05parque            
+05parque            
+05plaza             
+05plaza             
+05plaza             
+06bar               
+06bar               
+06bar               
+06bar               
+06biblioteca        
+06museo             
+06museo             
+06parque            
+06plaza             
+06plaza             
+06plaza             
+06plaza             
+06plaza             
+07bar               
+07centro comunitario
+07centro comunitario
+07parque            
+07parque            
+07plaza             
+07plaza             
+07plaza             
+07plaza             
+07plaza             
+08bar               
+08bar               
+08bar               
+08biblioteca        
+08biblioteca        
+08biblioteca        
+08centro comunitario
+08centro comunitario
+08centro comunitario
