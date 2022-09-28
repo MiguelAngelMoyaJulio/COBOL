@@ -1,0 +1,240 @@
+01Buenos Aires                          27732
+01Ciudad Autonoma de Buenos Aires       28510
+01Catamarca                             25881
+01Chaco                                 19296
+01Chubut                                15867
+01Cordoba                               23833
+01Corrientes                            28465
+01Entre Rios                            13652
+01Formosa                               21430
+01Jujuy                                 14522
+01La Pampa                              19310
+01La Rioja                              24892
+01Mendoza                               17753
+01Misiones                              12903
+01Neuquen                               16788
+01Rio Negro                             14862
+01Salta                                 14327
+01San Juan                              21165
+01San Luis                              23533
+01Santa Cruz                            21364
+01Santa Fe                              18839
+01Santiago del Estero                   13588
+01Tierra del Fuego                      29081
+01Tucuman                               13116
+02Buenos Aires                          16057
+02Ciudad Autonoma de Buenos Aires       27075
+02Catamarca                             17466
+02Chaco                                 12541
+02Chubut                                15976
+02Cordoba                               13362
+02Corrientes                            26493
+02Entre Rios                            12998
+02Formosa                               12290
+02Jujuy                                 27281
+02La Pampa                              22508
+02La Rioja                              23157
+02Mendoza                               17110
+02Misiones                              20200
+02Neuquen                               20470
+02Rio Negro                             12347
+02Salta                                 26843
+02San Juan                              17875
+02San Luis                              24716
+02Santa Cruz                            21222
+02Santa Fe                              21673
+02Santiago del Estero                   17321
+02Tierra del Fuego                      21765
+02Tucuman                               10096
+03Buenos Aires                          21728
+03Ciudad Autonoma de Buenos Aires       16403
+03Catamarca                             26189
+03Chaco                                 20402
+03Chubut                                15393
+03Cordoba                               16283
+03Corrientes                            13445
+03Entre Rios                            10030
+03Formosa                               24401
+03Jujuy                                 12476
+03La Pampa                              29989
+03La Rioja                              12998
+03Mendoza                               10712
+03Misiones                              13132
+03Neuquen                               23954
+03Rio Negro                             12615
+03Salta                                 18783
+03San Juan                              29649
+03San Luis                              28396
+03Santa Cruz                            16529
+03Santa Fe                              19894
+03Santiago del Estero                   21254
+03Tierra del Fuego                      10445
+03Tucuman                               22440
+04Buenos Aires                          22527
+04Ciudad Autonoma de Buenos Aires       16922
+04Catamarca                             16052
+04Chaco                                 18375
+04Chubut                                16022
+04Cordoba                               26756
+04Corrientes                            21368
+04Entre Rios                            10089
+04Formosa                               19737
+04Jujuy                                 29809
+04La Pampa                              23462
+04La Rioja                              25872
+04Mendoza                               28921
+04Misiones                              25714
+04Neuquen                               16513
+04Rio Negro                             12787
+04Salta                                 28657
+04San Juan                              24588
+04San Luis                              23746
+04Santa Cruz                            10337
+04Santa Fe                              15223
+04Santiago del Estero                   23167
+04Tierra del Fuego                      21890
+04Tucuman                               26823
+05Buenos Aires                          20816
+05Ciudad Autonoma de Buenos Aires       16473
+05Catamarca                             24215
+05Chaco                                 13510
+05Chubut                                20983
+05Cordoba                               27036
+05Corrientes                            10548
+05Entre Rios                            24370
+05Formosa                               25237
+05Jujuy                                 26162
+05La Pampa                              15175
+05La Rioja                              24334
+05Mendoza                               23393
+05Misiones                              24688
+05Neuquen                               26109
+05Rio Negro                             10465
+05Salta                                 20151
+05San Juan                              11865
+05San Luis                              13540
+05Santa Cruz                            13941
+05Santa Fe                              11197
+05Santiago del Estero                   14647
+05Tierra del Fuego                      19829
+05Tucuman                               15924
+06Buenos Aires                          17461
+06Ciudad Autonoma de Buenos Aires       10330
+06Catamarca                             14552
+06Chaco                                 10865
+06Chubut                                29460
+06Cordoba                               25641
+06Corrientes                            26285
+06Entre Rios                            21209
+06Formosa                               21727
+06Jujuy                                 28345
+06La Pampa                              22034
+06La Rioja                              23473
+06Mendoza                               15432
+06Misiones                              25138
+06Neuquen                               11105
+06Rio Negro                             18988
+06Salta                                 14936
+06San Juan                              16382
+06San Luis                              19249
+06Santa Cruz                            29420
+06Santa Fe                              24314
+06Santiago del Estero                   14735
+06Tierra del Fuego                      14339
+06Tucuman                               25303
+07Buenos Aires                          26049
+07Ciudad Autonoma de Buenos Aires       14331
+07Catamarca                             24817
+07Chaco                                 23359
+07Chubut                                24559
+07Cordoba                               26859
+07Corrientes                            17517
+07Entre Rios                            26276
+07Formosa                               10529
+07Jujuy                                 25117
+07La Pampa                              22512
+07La Rioja                              24668
+07Mendoza                               22935
+07Misiones                              10750
+07Neuquen                               29503
+07Rio Negro                             12896
+07Salta                                 27945
+07San Juan                              12212
+07San Luis                              23343
+07Santa Cruz                            28615
+07Santa Fe                              16234
+07Santiago del Estero                   24090
+07Tierra del Fuego                      17694
+07Tucuman                               16376
+08Buenos Aires                          19455
+08Ciudad Autonoma de Buenos Aires       27022
+08Catamarca                             20857
+08Chaco                                 21260
+08Chubut                                17644
+08Cordoba                               19257
+08Corrientes                            11213
+08Entre Rios                            11224
+08Formosa                               26701
+08Jujuy                                 16197
+08La Pampa                              25842
+08La Rioja                              17122
+08Mendoza                               16481
+08Misiones                              22444
+08Neuquen                               28484
+08Rio Negro                             22292
+08Salta                                 14653
+08San Juan                              10042
+08San Luis                              21606
+08Santa Cruz                            10355
+08Santa Fe                              10990
+08Santiago del Estero                   21742
+08Tierra del Fuego                      25242
+08Tucuman                               25400
+09Buenos Aires                          11744
+09Ciudad Autonoma de Buenos Aires       13664
+09Catamarca                             23207
+09Chaco                                 24178
+09Chubut                                13072
+09Cordoba                               16712
+09Corrientes                            11513
+09Entre Rios                            29428
+09Formosa                               20916
+09Jujuy                                 20367
+09La Pampa                              18095
+09La Rioja                              20608
+09Mendoza                               12155
+09Misiones                              18720
+09Neuquen                               29652
+09Rio Negro                             27880
+09Salta                                 20210
+09San Juan                              20112
+09San Luis                              27503
+09Santa Cruz                            15537
+09Santa Fe                              17803
+09Santiago del Estero                   20210
+09Tierra del Fuego                      12290
+09Tucuman                               17143
+10Buenos Aires                          24775
+10Ciudad Autonoma de Buenos Aires       26073
+10Catamarca                             13657
+10Chaco                                 16789
+10Chubut                                28607
+10Cordoba                               20788
+10Corrientes                            21824
+10Entre Rios                            25929
+10Formosa                               20159
+10Jujuy                                 29088
+10La Pampa                              27972
+10La Rioja                              15519
+10Mendoza                               24369
+10Misiones                              27459
+10Neuquen                               16692
+10Rio Negro                             14677
+10Salta                                 26764
+10San Juan                              25085
+10San Luis                              12646
+10Santa Cruz                            28020
+10Santa Fe                              11711
+10Santiago del Estero                   17565
+10Tierra del Fuego                      16344
+10Tucuman                               16435
