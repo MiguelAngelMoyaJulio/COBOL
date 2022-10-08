@@ -1,6 +1,9 @@
       ******************************************************************
-      * En las últimas elecciones, se desea conocer  
-      *los totales para cada candidato por provincia.
+      *En una farmacia, se desea actualizar el stock de 
+      *medicamentos con la llegada de un lote reciente de un
+      *laboratorio determinado. Ambos archivos se 
+      *encuentran ordenados en forma ascendente por Código de
+      *Producto.
       ******************************************************************
       ******************************************************************
       *                     IDENTIFICATION DIVISION
