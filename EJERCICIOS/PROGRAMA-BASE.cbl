@@ -29,9 +29,9 @@
       ******************************************************************
        WORKING-STORAGE SECTION.
       ************************  CONSTANTES  ****************************
-       01 WS-CON.       
+
       **************************  SWITCHES  ****************************
-       01 WS-SWITCHES.       
+
       ************************** VARIABLES *****************************
        01 WS-VAR.
        LINKAGE SECTION.        
@@ -44,7 +44,6 @@
                                                   
            PERFORM 200000-PROCESS                     
               THRU 200000-PROCESS-F                   
-              UNTIL CONDICION                 
                                                   
            PERFORM 300000-END                         
               THRU 300000-END-F   
