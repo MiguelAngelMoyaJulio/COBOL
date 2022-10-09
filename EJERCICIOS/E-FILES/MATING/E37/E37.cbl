@@ -1,14 +1,24 @@
       ******************************************************************
-      *En una farmacia, se desea actualizar el stock de 
-      *medicamentos con la llegada de un lote reciente de un
-      *laboratorio determinado. Ambos archivos se 
-      *encuentran ordenados en forma ascendente por Código de Producto.
+      *Se tiene un archivo maestro de facturas de gas de una localidad del Gran Buenos Aires y otro con las novedades
+      *de pagos del mes de dichas facturas, ordenados en forma ascendente por Nº de medidor. Se desea imprimir un
+      *listado con el detalle de los deudores, y los siguientes totales de Control: cant total de deudores y monto total
+      *adeudado.
+      *ENTRADA:
+      *Archivo MAESTRO ( 1 registro por medidor – ordenado secuencial ascendente por NROMEDIDOR)
+      *NROMEDIDOR NOMBRECLTE IMP-DEUDA
+      *Archivo de COBRANZAS: (1, varios o ningún registro por medidor - ordenado secuencial ascendente por
+      *NROMEDIDOR)
+      *NROMEDIDOR IMP-PAGO
+      *PROCESO:
+      *Deberá aparear estos archivos a efectos de:
+      *1. Actualizar el saldo para cada cliente para lo cuál deberá restar los importes de la
+      *cobranza. 2. Contar la cantidad total de deudores.
       ******************************************************************
       ******************************************************************
       *                     IDENTIFICATION DIVISION
       ****************************************************************** 
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. E36.
+       PROGRAM-ID. E37.
        AUTHOR. MIGUEL MOYA.
        DATE-WRITTEN. SEPTEMBER 2022.
        DATE-COMPILED. SEPTEMBER 2022.
@@ -32,32 +42,25 @@
        SELECT MASTER-UPDATE ASSIGN TO "MASTER_UPDATE.txt"
                      FILE STATUS IS FS-STATUS3
                      ORGANIZATION IS LINE SEQUENTIAL.
-       
-       SELECT ERRORS ASSIGN TO "ERRORS.txt"
-                     FILE STATUS IS FS-STATUS4
-                     ORGANIZATION IS LINE SEQUENTIAL.
        DATA DIVISION.
        FILE SECTION.
        FD MASTER.
           01 REG-MASTER.
-             05 REG-CODE-PRO                PIC 9(02).
-             05 REG-NAME-PRO                PIC X(03).
-             05 REG-AMOUNT                  PIC 9(02).
+             05 REG-NRO-MEDIDOR                PIC 9(02).
+             05 REG-NRO-CLIENTE                PIC 9(04).
+             05 REG-NRO-DEUDA                  PIC 9(04)V9(02).
        
        FD NEWS.
           01 REG-NEWS.
-             05 REG-CODE-PRO-N              PIC 9(02).
-             05 REG-NAME-PRO-N              PIC X(03).
-             05 REG-AMOUNT-N                PIC 9(02).
+             05 REG-NRO-MEDIDOR-N              PIC 9(02).
+             05 REG-NRO-PAGO-N                 PIC 9(04)V9(02).
        
        FD MASTER-UPDATE.
           01 REG-MASTER-UPDATE.              
-             05 REG-CODE-PRO-U              PIC 9(02).
-             05 REG-NAME-PRO-U              PIC X(03).
-             05 REG-AMOUNT-U                PIC 9(03).
+             05 REG-NRO-MEDIDOR-U              PIC 9(02).
+             05 REG-NRO-CLIENTE-U              PIC 9(04).
+             05 REG-NRO-DEUDA-U                PIC 9(04)V9(02).
 
-       FD ERRORS.
-          01 REG-ERRORS                     PIC X(07).              
       ******************************************************************
       *                     WORKING-STORAGE SECTION   
       ******************************************************************
@@ -73,29 +76,31 @@
           05 FS-STATUS3                    PIC X(02) VALUE "00".
              88 FS-STATUS3-OK                        VALUE "00".
              88 FS-STATUS3-EOF                       VALUE "10".
-          05 FS-STATUS4                    PIC X(02) VALUE "00".
-             88 FS-STATUS4-OK                        VALUE "00".
-             88 FS-STATUS4-EOF                       VALUE "10".
       ************************** VARIABLES *****************************
        01 WS-VAR.
-          02 WS-CODE-M                  PIC 9(02).
-          02 WS-CODE-N                  PIC 9(02).
-          02 WS-CAN-UPDATE              PIC 9(03).
-
+          02 WS-MEDIDOR-ANT                PIC 9(02).
+          02 WS-MATING.
+             05 WS-CODE-M                  PIC 9(02).
+             05 WS-CODE-N                  PIC 9(02).
+          02 WS-BILLING.   
+             05 WS-BILLING-PARTIAL         PIC 9(04)V9(02).  
+             05 WS-BILLING-FINAL           PIC 9(04)V9(02).  
+          02 WS-ACCUM.
+             05 WS-TOTAL-DEBTOR            PIC 9(03).
        01 WS-TITLE.
-          02 FILLER                   PIC X(11) VALUE "COD.PRODUCT". 
+          02 FILLER                   PIC X(12) VALUE "NRO.MEDIDDOR". 
           02 FILLER                   PIC X(03) VALUE SPACES. 
-          02 FILLER                   PIC X(12) VALUE "PRODUCT NAME". 
+          02 FILLER                   PIC X(11) VALUE "CLIENT NAME". 
           02 FILLER                   PIC X(03) VALUE SPACES. 
-          02 FILLER                   PIC X(05) VALUE "STOCK". 
+          02 FILLER                   PIC X(04) VALUE "DEBT". 
        
        01 WS-SUBTITLE.
           02 FILLER                   PIC X(05) VALUE SPACES. 
-          02 SUB-CODE                 PIC X(02). 
+          02 SUB-MEDIDOR              PIC 9(02). 
           02 FILLER                   PIC X(12) VALUE SPACES. 
-          02 SUB-NAME                 PIC X(03). 
-          02 FILLER                   PIC X(09) VALUE SPACES. 
-          02 SUB-STOCK                PIC X(03). 
+          02 SUB-CLIENT               PIC 9(04). 
+          02 FILLER                   PIC X(05) VALUE SPACES. 
+          02 SUB-DEUDA                PIC --.--9,99. 
        LINKAGE SECTION.        
       ******************************************************************
       *                         PROCEDURE DIVISION   
@@ -109,7 +114,7 @@
               UNTIL FS-STATUS1-EOF AND FS-STATUS2-EOF                 
                                                   
            PERFORM 300000-END                         
-              THRU 300000-END-F                       
+              THRU 300000-END-F   
            .                                      
             STOP RUN.                             
       ******************************************************************
@@ -124,16 +129,12 @@
            
            PERFORM 130000-OPEN-MASTER-UPDATE                
               THRU 130000-OPEN-MASTER-UPDATE-F
-           
-           PERFORM 140000-OPEN-ERRORS                
-              THRU 140000-OPEN-ERRORS-F
                             
            PERFORM 210000-READ-MASTER                       
               THRU 210000-READ-MASTER-F                     
            
            PERFORM 220000-READ-NEWS                       
               THRU 220000-READ-NEWS-F  
-
            DISPLAY WS-TITLE                      
            .                                      
        100000-START-F. EXIT.                         
@@ -169,60 +170,54 @@
            .
        130000-OPEN-MASTER-UPDATE-F. EXIT.
       ******************************************************************
-      *                         140000-OPEN-ERRORS   
-      ******************************************************************
-       140000-OPEN-ERRORS.
-           OPEN OUTPUT ERRORS                   
-           IF NOT FS-STATUS4-OK
-               DISPLAY "ERROR AL ABRIR ARCHIVO ERRORS " FS-STATUS4
-           END-IF                        
-           .
-       140000-OPEN-ERRORS-F. EXIT.
-      ******************************************************************
       *                         200000-PROCESS   
       ****************************************************************** 
        200000-PROCESS.
+           MOVE ZEROES TO WS-BILLING-PARTIAL
+           MOVE ZEROES TO WS-BILLING-FINAL
            IF WS-CODE-M = WS-CODE-N
-               COMPUTE WS-CAN-UPDATE = REG-AMOUNT-N + REG-AMOUNT
+               PERFORM UNTIL WS-CODE-M <> WS-CODE-N
+                       COMPUTE WS-BILLING-PARTIAL = WS-BILLING-PARTIAL +
+                               REG-NRO-PAGO-N
+                       PERFORM 220000-READ-NEWS                       
+                          THRU 220000-READ-NEWS-F
+               END-PERFORM
+               
+               COMPUTE WS-BILLING-FINAL = REG-NRO-DEUDA - 
+                                          WS-BILLING-PARTIAL
+                
+               PERFORM 240000-CALCULATE-FINAL-BILLING
+                  THRU 240000-CALCULATE-FINAL-BILLING-F
 
-               MOVE REG-CODE-PRO  TO SUB-CODE
-               MOVE REG-NAME-PRO  TO SUB-NAME
-               MOVE WS-CAN-UPDATE TO SUB-STOCK
-               DISPLAY WS-SUBTITLE
-
-               INITIALIZE REG-MASTER-UPDATE
-               MOVE REG-MASTER(1:5) TO REG-MASTER-UPDATE(1:5)
-               MOVE WS-CAN-UPDATE   TO REG-AMOUNT-U
+               PERFORM 250000-DISPLAY-RECORD
+                  THRU 250000-DISPLAY-RECORD-F 
 
                PERFORM 230000-WRITE-MASTER-UPDATE
                   THRU 230000-WRITE-MASTER-UPDATE-F
                
                PERFORM 210000-READ-MASTER                       
                   THRU 210000-READ-MASTER-F                     
-           
-               PERFORM 220000-READ-NEWS                       
-                  THRU 220000-READ-NEWS-F
            ELSE
                IF WS-CODE-M > WS-CODE-N
-
-                  PERFORM 240000-WRITE-ERRORS
-                     THRU 240000-WRITE-ERRORS-F                  
-
+                  MOVE WS-CODE-N TO WS-MEDIDOR-ANT
+                  PERFORM UNTIL WS-MEDIDOR-ANT <> WS-CODE-N
+                          PERFORM 220000-READ-NEWS                       
+                             THRU 220000-READ-NEWS-F 
+                  END-PERFORM
                   PERFORM 220000-READ-NEWS                       
                      THRU 220000-READ-NEWS-F 
                ELSE
-                  INITIALIZE REG-MASTER-UPDATE
-                  MOVE REG-MASTER(1:5) TO REG-MASTER-UPDATE(1:5)
-                  MOVE REG-MASTER(6:2) TO REG-AMOUNT-U
-                  
+                  MOVE REG-NRO-DEUDA TO WS-BILLING-FINAL 
+
                   PERFORM 230000-WRITE-MASTER-UPDATE
                      THRU 230000-WRITE-MASTER-UPDATE-F
 
-                  MOVE REG-CODE-PRO  TO SUB-CODE
-                  MOVE REG-NAME-PRO  TO SUB-NAME
-                  MOVE REG-AMOUNT    TO SUB-STOCK
-                  DISPLAY WS-SUBTITLE 
-                  
+                  PERFORM 250000-DISPLAY-RECORD
+                     THRU 250000-DISPLAY-RECORD-F                   
+
+                  PERFORM 240000-CALCULATE-FINAL-BILLING
+                     THRU 240000-CALCULATE-FINAL-BILLING-F
+
                   PERFORM 210000-READ-MASTER                       
                      THRU 210000-READ-MASTER-F
                END-IF        
@@ -237,7 +232,7 @@
            READ MASTER INTO REG-MASTER
            EVALUATE TRUE
                WHEN FS-STATUS1-OK
-                    MOVE REG-CODE-PRO TO WS-CODE-M
+                    MOVE REG-NRO-MEDIDOR TO WS-CODE-M
                WHEN FS-STATUS1-EOF
                     MOVE 99 TO WS-CODE-M
            END-EVALUATE
@@ -251,7 +246,7 @@
            READ NEWS INTO REG-NEWS
            EVALUATE TRUE
                WHEN FS-STATUS2-OK
-                    MOVE REG-CODE-PRO-N TO WS-CODE-N
+                    MOVE REG-NRO-MEDIDOR-N TO WS-CODE-N
                WHEN FS-STATUS2-EOF
                     MOVE 99 TO WS-CODE-N
            END-EVALUATE
@@ -261,6 +256,11 @@
       *                         230000-WRITE-MASTER-UPDATE   
       ******************************************************************      
        230000-WRITE-MASTER-UPDATE.
+           INITIALIZE REG-MASTER-UPDATE
+           MOVE REG-NRO-MEDIDOR  TO REG-NRO-MEDIDOR-U
+           MOVE REG-NRO-CLIENTE  TO REG-NRO-CLIENTE-U
+           MOVE WS-BILLING-FINAL TO REG-NRO-DEUDA-U
+
            WRITE REG-MASTER-UPDATE
            IF NOT FS-STATUS3-OK
                DISPLAY "ERROR AL GRABAR MAESTRO-UPDATE" FS-STATUS3
@@ -268,17 +268,24 @@
            .
        230000-WRITE-MASTER-UPDATE-F. EXIT.
       ******************************************************************
-      *                         240000-WRITE-ERRORS   
+      *                         240000-CALCULATE-FINAL-BILLING   
       ******************************************************************      
-       240000-WRITE-ERRORS.
-           INITIALIZE REG-ERRORS
-           MOVE REG-NEWS TO REG-ERRORS
-           WRITE REG-ERRORS
-           IF NOT FS-STATUS4-OK
-               DISPLAY "ERROR AL GRABAR ERROR" FS-STATUS4
-           END-IF 
+       240000-CALCULATE-FINAL-BILLING.
+           IF WS-BILLING-FINAL > ZEROS
+              ADD 1 TO WS-TOTAL-DEBTOR
+           END-IF   
            .
-       240000-WRITE-ERRORS-F. EXIT.
+       240000-CALCULATE-FINAL-BILLING-F. EXIT.
+      ******************************************************************
+      *                         250000-DISPLAY-RECORD   
+      ******************************************************************      
+       250000-DISPLAY-RECORD.
+           MOVE REG-NRO-MEDIDOR  TO SUB-MEDIDOR
+           MOVE REG-NRO-CLIENTE  TO SUB-CLIENT
+           MOVE WS-BILLING-FINAL TO SUB-DEUDA
+           DISPLAY WS-SUBTITLE
+           .
+       250000-DISPLAY-RECORD-F. EXIT.
       ******************************************************************
       *                         300000-END   
       ****************************************************************** 
@@ -291,9 +298,6 @@
               
            PERFORM 330000-CLOSE-MASTER-UPDATE
               THRU 330000-CLOSE-MASTER-UPDATE-F
-
-           PERFORM 340000-CLOSE-ERRORS
-              THRU 340000-CLOSE-ERRORS-F
            .    
        300000-END-F. EXIT.
       ******************************************************************
@@ -327,14 +331,4 @@
            END-IF
            .
        330000-CLOSE-MASTER-UPDATE-F. EXIT.
-      ******************************************************************
-      *                         340000-CLOSE-ERRORS   
-      ****************************************************************** 
-       340000-CLOSE-ERRORS.
-           CLOSE ERRORS
-           IF NOT FS-STATUS4-OK
-               DISPLAY "ERROR AL CERRAR ARCHIVO ERROR " FS-STATUS4
-           END-IF
-           .
-       340000-CLOSE-ERRORS-F. EXIT.
-       END PROGRAM E36.
+       END PROGRAM E37.
