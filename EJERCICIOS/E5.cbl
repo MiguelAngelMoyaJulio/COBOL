@@ -1,14 +1,31 @@
       ******************************************************************
-      * Author: MIGUEL MOYA
-      * Date: 2022-09-06
       * Dadas dos fechas, informar cual es la más reciente. 
       * Determinar cuales deben ser los datos de entrada 
       * y en que formato los debe ingresar el usuario.
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. E5.
+       AUTHOR. MIGUEL MOYA.
+       DATE-WRITTEN. OCTOBER 2022.
+       DATE-COMPILED. OCTOBER 2022.
+      ******************************************************************
+      *                     ENVIRONMENT DIVISION
+      ****************************************************************** 
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+             DECIMAL-POINT IS COMMA.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+      *****************************  INPUT  ****************************
+       
+      ****************************  OUTPUT  ****************************
+
        DATA DIVISION.
        FILE SECTION.
+      ******************************************************************
+      *                     WORKING-STORAGE SECTION   
+      ******************************************************************
        WORKING-STORAGE SECTION.
        01 WS-F1.
           02 WS-A     PIC X(04). 
@@ -22,24 +39,44 @@
           02 WS-MM     PIC X(02). 
           02 FILLER    PIC X(01). 
           02 WS-DD     PIC X(02). 
+      ************************  CONSTANTES  ****************************
+
+      **************************  SWITCHES  ****************************
+
+      ************************** VARIABLES *****************************
+
+      ******************************************************************
+      *                       LINKAGE SECTION   
+      ******************************************************************
+       LINKAGE SECTION. 
+      ******************************************************************
+      *                         PROCEDURE DIVISION   
+      ****************************************************************** 
        PROCEDURE DIVISION.
-           PERFORM 100-LOAD
-              THRU 100-LOAD-F
-           
-           PERFORM 200-PROCESS
-              THRU 200-PROCESS-F
+           PERFORM 100000-START                      
+              THRU 100000-START-F                    
+                                                  
+           PERFORM 200000-PROCESS                     
+              THRU 200000-PROCESS-F                   
+                                                  
+           PERFORM 300000-END                         
+              THRU 300000-END-F
            .
-           STOP RUN.
-       100-LOAD.
+      ******************************************************************
+      *                         100000-START   
+      ******************************************************************
+       100000-START.
            DISPLAY "FORMAT DATE AAAA-MM-DD"
            DISPLAY "ENTER THE FIRST DATE "
            ACCEPT WS-F1
            DISPLAY "ENTER THE SECOND DATE "
            ACCEPT WS-F2
            .
-       100-LOAD-F.
-
-       200-PROCESS.
+       100000-START-F. EXIT.
+      ******************************************************************
+      *                         200000-PROCESS   
+      ******************************************************************
+       200000-PROCESS.
            IF WS-A > WS-AA
                DISPLAY WS-F1 " IS MORE RECENT"
            ELSE
@@ -66,5 +103,14 @@
                END-IF    
            END-IF
            .
-       200-PROCESS-F.
+       200000-PROCESS-F. EXIT.
+      ******************************************************************
+      *                         300000-END   
+      ****************************************************************** 
+       300000-END.
+           DISPLAY "FIN"
+           STOP RUN 
+           .    
+       300000-END-F. EXIT. 
+
        END PROGRAM E5.
