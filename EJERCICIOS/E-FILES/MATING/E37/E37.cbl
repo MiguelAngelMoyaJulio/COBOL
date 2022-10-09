@@ -135,6 +135,7 @@
            
            PERFORM 220000-READ-NEWS                       
               THRU 220000-READ-NEWS-F  
+           
            DISPLAY WS-TITLE                      
            .                                      
        100000-START-F. EXIT.                         
