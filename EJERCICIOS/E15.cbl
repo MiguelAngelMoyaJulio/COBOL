@@ -89,13 +89,14 @@
                    ADD 1 TO WS-AMOUNT-SPACES
                END-IF
            END-PERFORM           
+           
+           MOVE "N" TO WS-POINT-FOUND
            . 
        100000-START-F. EXIT.
       ******************************************************************
       *                         200000-PROCESS         
       ******************************************************************
        200000-PROCESS.
-           MOVE "N" TO WS-POINT-FOUND
            PERFORM VARYING WS-INDEX FROM 1
            BY 1 UNTIL WS-POINT-FOUND = "Y"
                
