@@ -1,25 +1,33 @@
       ******************************************************************
-      * Author: MIGUEL MOYA
-      * Date: 2022-09-07
       * Dados n valores numéricos, informar el mayor, el menor y en
       * que posición del conjunto fueron ingresados cada uno de ellos.
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. E12.
+       AUTHOR. MIGUEL MOYA.
+       DATE-WRITTEN. OCTOBER 2022.
+       DATE-COMPILED. OCTOBER 2022.
+      ******************************************************************
+      *                     ENVIRONMENT DIVISION
+      ****************************************************************** 
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+             DECIMAL-POINT IS COMMA.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-
-       SELECT OPTIONAL DATOS
-       ASSIGN TO "DAT.txt"
-       ORGANIZATION IS LINE SEQUENTIAL.
+      *****************************  INPUT  ****************************
+       SELECT DATOS ASSIGN TO "DAT.txt"
+                    FILE STATUS IS FS-STATUS 
+                    ORGANIZATION IS LINE SEQUENTIAL.
+       
+      ****************************  OUTPUT  ****************************
        
        DATA DIVISION.
        FILE SECTION.
        FD DATOS.
-           01 REG-DATOS.
-               05 REG-NUM PIC 9(03).
-           
+          01 REG-DATOS.
+             05 REG-NUM PIC 9(03).
        WORKING-STORAGE SECTION.
        01 WS-VAR.
           02 WS-MIN         PIC 9(03). 
