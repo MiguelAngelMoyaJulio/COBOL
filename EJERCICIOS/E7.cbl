@@ -60,15 +60,22 @@
            
            PERFORM 200000-PROCESS
               THRU 200000-PROCESS-F
+              
+           PERFORM 300000-END
+              THRU 300000-END-F
            .
-           STOP RUN.
+      ******************************************************************
+      *                         100000-START   
+      ******************************************************************     
        100000-START.
            DISPLAY "DATE FORMAT YYYY-MM-DD"
            DISPLAY "ENTER THE FIRST SIDE "
            ACCEPT WS-F1
            .
-       100000-START-F.
-
+       100000-START-F. EXIT.
+      ******************************************************************
+      *                         200000-PROCESS   
+      ******************************************************************
        200000-PROCESS.
            DIVIDE WS-Y BY 4 GIVING WS-RES1 REMAINDER WS-MOD-4
            DIVIDE WS-Y BY 100 GIVING WS-RES2 REMAINDER WS-MOD-100
@@ -154,16 +161,15 @@
                                                  + WS-D
                END-EVALUATE
            END-IF
-           DISPLAY "TOTAL DAYS " WS-AMOUNT-DAYS               
            .
        200000-PROCESS-F. EXIT.
       ******************************************************************
       *                         300000-END   
       ****************************************************************** 
        300000-END.
-           DISPLAY "FIN"
+           DISPLAY "TOTAL DAYS " WS-AMOUNT-DAYS               
            STOP RUN 
            .    
        300000-END-F. EXIT. 
-       
+
        END PROGRAM E7.
