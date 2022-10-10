@@ -1,39 +1,84 @@
       ******************************************************************
-      * Author: MIGUEL MOYA
-      * Date: 2022-09-06
       * Se ingresa un valor numérico entero, se pide calcular 
       * e informar su factorial.
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. E10.
+       AUTHOR. MIGUEL MOYA.
+       DATE-WRITTEN. OCTOBER 2022.
+       DATE-COMPILED. OCTOBER 2022.
+      ******************************************************************
+      *                     ENVIRONMENT DIVISION
+      ****************************************************************** 
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+             DECIMAL-POINT IS COMMA.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+      *****************************  INPUT  ****************************
+       
+      ****************************  OUTPUT  ****************************
+
        DATA DIVISION.
        FILE SECTION.
+      ******************************************************************
+      *                     WORKING-STORAGE SECTION   
+      ******************************************************************
        WORKING-STORAGE SECTION.
-       77 WS-A PIC 9(04). 
-       77 WS-I PIC 9(04). 
-       77 WS-FACTORIAL PIC 9(04). 
+      ************************  CONSTANTES  ****************************
+
+      **************************  SWITCHES  ****************************
+
+      ************************** VARIABLES *****************************
+       01 WS-VAR.
+           02 WS-A         PIC 9(04). 
+           02 WS-I         PIC 9(04). 
+           02 WS-FACTORIAL PIC 9(04). 
+      ******************************************************************
+      *                       LINKAGE SECTION   
+      ****************************************************************** 
+       LINKAGE SECTION.        
+      ******************************************************************
+      *                         PROCEDURE DIVISION   
+      ****************************************************************** 
        PROCEDURE DIVISION.
-           PERFORM 100-LOAD
-              THRU 100-LOAD-F
+           PERFORM 100000-START
+              THRU 100000-START-F
            
-           PERFORM 200-PROCESS
-              THRU 200-PROCESS-F
+           PERFORM 200000-PROCESS
+              THRU 200000-PROCESS-F
+           
+           PERFORM 300000-END
+              THRU 300000-END-F
            .
-           STOP RUN.
-       100-LOAD.
+      ******************************************************************
+      *                         100000-START   
+      ******************************************************************
+       100000-START.
            DISPLAY "ENTER A NUMBER "
            ACCEPT WS-A
            .
-       100-LOAD-F.
-
-       200-PROCESS.
+       100000-START-F. EXIT.
+      ******************************************************************
+      *                         200000-PROCESS   
+      ******************************************************************
+       200000-PROCESS.
            ADD 1 TO WS-FACTORIAL
            PERFORM VARYING WS-I FROM 1
            BY 1 UNTIL WS-I > WS-A
             COMPUTE WS-FACTORIAL = WS-FACTORIAL * WS-I
            END-PERFORM
-
-           DISPLAY "FACTORIAL OF " WS-A " IS : " WS-FACTORIAL
            .
-       200-PROCESS-F.
+       200000-PROCESS-F. EXIT.
+      ******************************************************************
+      *                         300000-END   
+      ****************************************************************** 
+       300000-END.
+           DISPLAY "FACTORIAL OF " WS-A " IS : " WS-FACTORIAL
+           DISPLAY "FIN"
+           STOP RUN 
+           .    
+       300000-END-F. EXIT. 
+       
        END PROGRAM E10.
