@@ -18,7 +18,13 @@
              DECIMAL-POINT IS COMMA.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
+      ******************************************************************
+      *                            FILES   
+      ******************************************************************
       *****************************  INPUT  ****************************
+       SELECT MASTER ASSIGN TO "DATOS.txt"
+                     FILE STATUS IS FS-STATUS-FILE
+                     ORGANIZATION IS LINE SEQUENTIAL. 
        
       ****************************  OUTPUT  ****************************
 
@@ -31,22 +37,22 @@
       *                     WORKING-STORAGE SECTION   
       ******************************************************************
        WORKING-STORAGE SECTION.
-      ************************  CONSTANTES  ****************************
-       01 WS-CON.       
-          05 WS-CON-1                 PIC 9(01) VALUE 1.
+      ************************  CONSTANTS  *****************************
+       01 WS-CONSTANTS.       
+          05 CON-1                         PIC 9(01) VALUE 1.
       **************************  SWITCHES  ****************************
        01 WS-SWITCHES.       
-          05 FS-STATUS               PIC X(02) VALUE "00".
-             88 FS-STATUS-OK                   VALUE "00".
-             88 FS-STATUS-EOF                  VALUE "10".
+          05 FS-STATUS-FILE                PIC X(02) VALUE "00".
+             88 FS-STATUS-FILE-OK                    VALUE "00".
+             88 FS-STATUS-FILE-EOF                   VALUE "10".
       ************************** VARIABLES *****************************
-       01 WS-VAR.
+       01 WS-VARIABLES.
       ******************************************************************
       *                       LINKAGE SECTION   
       ****************************************************************** 
        LINKAGE SECTION.        
       ******************************************************************
-      *                         PROCEDURE DIVISION   
+      *                      PROCEDURE DIVISION   
       ******************************************************************
        PROCEDURE DIVISION.
            PERFORM 100000-START                      
@@ -73,8 +79,8 @@
       ******************************************************************
        110000-OPEN-MASTER.                        
            OPEN INPUT MASTER                   
-           IF NOT FS-STATUS-OK
-               DISPLAY "ERROR AL ABRIR ARCHIVO MAESTRO " FS-STATUS
+           IF NOT FS-STATUS-FILE-OK
+               DISPLAY "ERROR AL ABRIR ARCHIVO MAESTRO " FS-STATUS-FILE
            END-IF
            .
        110000-OPEN-MASTER-F. EXIT.                          
@@ -92,9 +98,9 @@
            INITIALIZE REG-MASTER
            READ MASTER INTO REG-MASTER
            EVALUATE TRUE
-               WHEN FS-STATUS-OK
+               WHEN FS-STATUS-FILE-OK
                     CONTINUE   
-               WHEN FS-STATUS-EOF
+               WHEN FS-STATUS-FILE-EOF
                     CONTINUE
            END-EVALUATE
            .
@@ -115,8 +121,8 @@
       ****************************************************************** 
        310000-CLOSE-MASTER.
            CLOSE MASTER
-           IF NOT FS-STATUS-OK
-               DISPLAY "ERROR AL CERRAR ARCHIVO MASTER " FS-STATUS
+           IF NOT FS-STATUS-FILE-OK
+               DISPLAY "ERROR AL CERRAR ARCHIVO MASTER " FS-STATUS-FILE
            END-IF
            .
        310000-CLOSE-MASTER-F. EXIT. 
