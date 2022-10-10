@@ -92,9 +92,9 @@
            INITIALIZE REG-MASTER
            READ MASTER INTO REG-MASTER
            EVALUATE TRUE
-               WHEN FS-STATUS1-OK
+               WHEN FS-STATUS-OK
                     CONTINUE   
-               WHEN FS-STATUS1-EOF
+               WHEN FS-STATUS-EOF
                     CONTINUE
            END-EVALUATE
            .

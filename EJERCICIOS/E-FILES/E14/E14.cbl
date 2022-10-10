@@ -15,58 +15,96 @@
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. E14.
+       AUTHOR. MIGUEL MOYA.
+       DATE-WRITTEN. OCTOBER 2022.
+       DATE-COMPILED. OCTOBER 2022.
+      ******************************************************************
+      *                     ENVIRONMENT DIVISION
+      ****************************************************************** 
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+             DECIMAL-POINT IS COMMA.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-       SELECT OPTIONAL DATOS
-       ASSIGN TO "DAT.txt"
-       ORGANIZATION IS LINE SEQUENTIAL.
+      *****************************  INPUT  ****************************
+       SELECT DATOS ASSIGN TO "DAT.txt"
+              FILE STATUS IS FS-STATUS
+              ORGANIZATION IS LINE SEQUENTIAL.
+      ****************************  OUTPUT  ****************************
+ 
        DATA DIVISION.
        FILE SECTION.
        FD DATOS.
            01 REG-DATOS.
-               05 REG-ID-CONT  PIC 9(05).
-               05 REG-ID-PORT  PIC 9(01).
-               05 REG-WEIGHT   PIC 9(02)V9.
-           
+              05 REG-ID-CONT  PIC 9(05).
+              05 REG-ID-PORT  PIC 9(01).
+              05 REG-WEIGHT   PIC 9(02)V99.
+      ******************************************************************
+      *                     WORKING-STORAGE SECTION   
+      ******************************************************************
        WORKING-STORAGE SECTION.
-           77 WS-STATUS                 PIC X(01).
-           77 WS-AMOUNT-P1              PIC 9(05).
-           77 WS-AMOUNT-P2              PIC 9(05).
-           77 WS-AMOUNT-P3              PIC 9(05).
-           77 WS-ID-MAX-WEIGHT          PIC 9(05).
-           77 WS-PA-MAX-WEIGHT          PIC 9(02)V9.
-           77 WS-TOTAL-WEIGHT           PIC 9(04)V9.
-           
+      ************************  CONSTANTES  ****************************
+       
+      **************************  SWITCHES  ****************************
+       01 WS-SWITCHES.       
+          05 FS-STATUS               PIC X(02) VALUE "00".
+             88 FS-STATUS-OK                   VALUE "00".
+             88 FS-STATUS-EOF                  VALUE "10".
+      ************************** VARIABLES *****************************
+       01 WS-VAR.
+           02 WS-AMOUNT-P1              PIC 9(05).
+           02 WS-AMOUNT-P2              PIC 9(05).
+           02 WS-AMOUNT-P3              PIC 9(05).
+           02 WS-ID-MAX-WEIGHT          PIC 9(05).
+           02 WS-PA-MAX-WEIGHT          PIC 9(02)V99.
+           02 WS-TOTAL-WEIGHT           PIC 9(04)V99.
+      ******************************************************************
+      *                       LINKAGE SECTION   
+      ****************************************************************** 
+       LINKAGE SECTION.        
+      ******************************************************************
+      *                         PROCEDURE DIVISION   
+      ******************************************************************     
        PROCEDURE DIVISION.
-           OPEN INPUT DATOS
-       
-           PERFORM 20-LEER
-           THRU 20-LEER-F
-       
-           MOVE REG-WEIGHT TO  WS-PA-MAX-WEIGHT
-           MOVE REG-ID-CONT TO WS-ID-MAX-WEIGHT
-
-           PERFORM 30-CALCULO
-           THRU 30-CALCULO-F
-           UNTIL WS-STATUS = "F"
-       
-           CLOSE DATOS
-
-           PERFORM 40-TOTALES
-              THRU 40-TOTALES-F
+           PERFORM 100000-START                      
+              THRU 100000-START-F                    
+                                                  
+           PERFORM 200000-PROCESS                     
+              THRU 200000-PROCESS-F
+              UNTIL FS-STATUS-EOF                   
+                                                  
+           PERFORM 300000-END                         
+              THRU 300000-END-F
            . 
-            STOP RUN.
+      ******************************************************************
+      *                         100000-START         
+      ******************************************************************
+       100000-START.
+           PERFORM 110000-OPEN-DATOS
+              THRU 110000-OPEN-DATOS-F  
 
-       20-LEER.
-           READ DATOS NEXT RECORD
-           AT END
-           MOVE "F" TO  WS-STATUS
-           .            
-       20-LEER-F. EXIT.
+           PERFORM 210000-READ-DATOS
+              THRU 210000-READ-DATOS-F                                  
 
-       30-CALCULO.
-
+           MOVE REG-WEIGHT  TO  WS-PA-MAX-WEIGHT
+           MOVE REG-ID-CONT TO WS-ID-MAX-WEIGHT
+           .                                      
+       100000-START-F. EXIT.
+      ******************************************************************
+      *                         110000-OPEN-DATOS   
+      ******************************************************************
+       110000-OPEN-DATOS.                        
+           OPEN INPUT DATOS                   
+           IF NOT FS-STATUS-OK
+               DISPLAY "ERROR AL ABRIR ARCHIVO MAESTRO " FS-STATUS
+           END-IF
+           .
+       110000-OPEN-DATOS-F. EXIT.     
+      ******************************************************************
+      *                         200000-PROCESS   
+      ****************************************************************** 
+       200000-PROCESS.
            COMPUTE WS-TOTAL-WEIGHT = WS-TOTAL-WEIGHT + REG-WEIGHT
    
            IF REG-WEIGHT > WS-PA-MAX-WEIGHT
@@ -83,17 +121,57 @@
                 ADD 1 TO WS-AMOUNT-P3
            END-EVALUATE
 
-           PERFORM 20-LEER
-           THRU 20-LEER-F
+           PERFORM 210000-READ-DATOS
+              THRU 210000-READ-DATOS-F
+           .         
+       200000-PROCESS-F. EXIT.
+      ******************************************************************
+      *                         210000-READ-DATOS   
+      ******************************************************************      
+       210000-READ-DATOS.
+           INITIALIZE REG-DATOS
+           READ DATOS INTO REG-DATOS
+           EVALUATE TRUE
+               WHEN FS-STATUS-OK
+                    CONTINUE   
+               WHEN FS-STATUS-EOF
+                    CONTINUE
+           END-EVALUATE
            .
-       30-CALCULO-F. EXIT. 
+       210000-READ-DATOS-F. EXIT. 
+      ******************************************************************
+      *                         300000-END   
+      ****************************************************************** 
+       300000-END.
+           PERFORM 310000-CLOSE-DATOS
+              THRU 310000-CLOSE-DATOS-F
+              
+           PERFORM 320000-TOTAL
+              THRU 320000-TOTAL-F
 
-       40-TOTALES. 
+           STOP RUN 
+           .    
+       300000-END-F. EXIT.
+      ******************************************************************
+      *                         310000-CLOSE-DATOS   
+      ****************************************************************** 
+       310000-CLOSE-DATOS.
+           CLOSE DATOS
+           IF NOT FS-STATUS-OK
+               DISPLAY "ERROR AL CERRAR ARCHIVO DATOS " FS-STATUS
+           END-IF
+           .
+       310000-CLOSE-DATOS-F. EXIT.
+      ******************************************************************
+      *                         320000-TOTAL   
+      ****************************************************************** 
+       320000-TOTAL.
            DISPLAY "TOTAL WEIGHT - TON "        WS-TOTAL-WEIGHT           
            DISPLAY "MAX WEIGHT - ID CONTAINER " WS-ID-MAX-WEIGHT           
            DISPLAY "AMOUNT OF CONTS TO PORT 1 " WS-AMOUNT-P1           
            DISPLAY "AMOUNT OF CONTS TO PORT 2 " WS-AMOUNT-P2           
            DISPLAY "AMOUNT OF CONTS TO PORT 3 " WS-AMOUNT-P3           
-           .           
-       40-TOTALES-F. EXIT.
+           .
+       320000-TOTAL-F. EXIT.
+
        END PROGRAM E14.
