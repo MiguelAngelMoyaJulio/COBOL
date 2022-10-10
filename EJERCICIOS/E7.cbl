@@ -1,44 +1,75 @@
       ******************************************************************
-      * Author: MIGUEL MOYA
-      * Date: 2022-09-06
       * Dados un mes y el año al que corresponde, informar cuantos 
       * días tiene el mes, considerando la posibilidad del que 
       * el año sea bisiesto.
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. E7.
+       AUTHOR. MIGUEL MOYA.
+       DATE-WRITTEN. OCTOBER 2022.
+       DATE-COMPILED. OCTOBER 2022.
+      ******************************************************************
+      *                     ENVIRONMENT DIVISION
+      ****************************************************************** 
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+             DECIMAL-POINT IS COMMA.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+      *****************************  INPUT  ****************************
+       
+      ****************************  OUTPUT  ****************************
+ 
        DATA DIVISION.
        FILE SECTION.
+      ******************************************************************
+      *                     WORKING-STORAGE SECTION   
+      ******************************************************************
        WORKING-STORAGE SECTION.
+      ************************  CONSTANTES  ****************************
+
+      **************************  SWITCHES  ****************************
+
+      ************************** VARIABLES *****************************
        01 WS-F1. 
-          02 WS-Y        PIC 9(04). 
-          02 FILLER      PIC X(01). 
-          02 WS-M        PIC 9(02). 
-          02 FILLER      PIC X(01). 
-          02 WS-D        PIC 9(02). 
-       77 WS-MOD-4       PIC 9(04). 
-       77 WS-MOD-100     PIC 9(04). 
-       77 WS-MOD-400     PIC 9(04). 
-       77 WS-RES1        PIC 9(04). 
-       77 WS-RES2        PIC 9(04). 
-       77 WS-RES3        PIC 9(04). 
-       77 WS-AMOUNT-DAYS PIC 9(04). 
+          02 WS-Y           PIC 9(04). 
+          02 FILLER         PIC X(01). 
+          02 WS-M           PIC 9(02). 
+          02 FILLER         PIC X(01). 
+          02 WS-D           PIC 9(02).
+
+       01 WS-OPE. 
+          02 WS-MOD-4       PIC 9(04). 
+          02 WS-MOD-100     PIC 9(04). 
+          02 WS-MOD-400     PIC 9(04). 
+          02 WS-RES1        PIC 9(04). 
+          02 WS-RES2        PIC 9(04). 
+          02 WS-RES3        PIC 9(04).
+          02 WS-AMOUNT-DAYS PIC 9(04). 
+      ******************************************************************
+      *                       LINKAGE SECTION   
+      ****************************************************************** 
+       LINKAGE SECTION. 
+      ******************************************************************
+      *                         PROCEDURE DIVISION   
+      ****************************************************************** 
        PROCEDURE DIVISION.
-           PERFORM 100-LOAD
-              THRU 100-LOAD-F
+           PERFORM 100000-START
+              THRU 100000-START-F
            
-           PERFORM 200-PROCESS
-              THRU 200-PROCESS-F
+           PERFORM 200000-PROCESS
+              THRU 200000-PROCESS-F
            .
            STOP RUN.
-       100-LOAD.
+       100000-START.
            DISPLAY "DATE FORMAT YYYY-MM-DD"
            DISPLAY "ENTER THE FIRST SIDE "
            ACCEPT WS-F1
            .
-       100-LOAD-F.
+       100000-START-F.
 
-       200-PROCESS.
+       200000-PROCESS.
            DIVIDE WS-Y BY 4 GIVING WS-RES1 REMAINDER WS-MOD-4
            DIVIDE WS-Y BY 100 GIVING WS-RES2 REMAINDER WS-MOD-100
            DIVIDE WS-Y BY 400 GIVING WS-RES3 REMAINDER WS-MOD-400
@@ -125,5 +156,14 @@
            END-IF
            DISPLAY "TOTAL DAYS " WS-AMOUNT-DAYS               
            .
-       200-PROCESS-F.
+       200000-PROCESS-F. EXIT.
+      ******************************************************************
+      *                         300000-END   
+      ****************************************************************** 
+       300000-END.
+           DISPLAY "FIN"
+           STOP RUN 
+           .    
+       300000-END-F. EXIT. 
+       
        END PROGRAM E7.
