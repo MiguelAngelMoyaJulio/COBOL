@@ -1,6 +1,4 @@
       ******************************************************************
-      * Author: MIGUEL MOYA
-      * Date: 2022-09-07
       * De un censo realizado en una población se conocen los siguientes
       * datos:
       *1.	Día de nacimiento (2 dígitos)
@@ -16,14 +14,33 @@
       *3.	Cuántos nacimientos de mujeres hubo en la primavera del 1982
       *4.	Sexo de la persona más vieja (solo existe una).
       ******************************************************************
+      ******************************************************************
+      *                     IDENTIFICATION DIVISION
+      ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. E18.
+       AUTHOR. MIGUEL MOYA.
+       DATE-WRITTEN. OCTOBER 2022.
+       DATE-COMPILED. OCTOBER 2022.
+      ******************************************************************
+      *                     ENVIRONMENT DIVISION
+      ****************************************************************** 
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+             DECIMAL-POINT IS COMMA.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-       SELECT OPTIONAL DATOS
-       ASSIGN TO "DAT.txt"
-       ORGANIZATION IS LINE SEQUENTIAL.
+      ******************************************************************
+      *                            FILES   
+      ******************************************************************
+      *****************************  INPUT  ****************************
+       SELECT DATOS ASSIGN TO "DAT.txt"
+                     FILE STATUS IS FS-STATUS-FILE
+                     ORGANIZATION IS LINE SEQUENTIAL. 
+       
+      ****************************  OUTPUT  ****************************
+
        DATA DIVISION.
        FILE SECTION.
        FD DATOS.
@@ -32,53 +49,80 @@
                05 REG-MES       PIC 9(02).
                05 REG-ANIO      PIC 9(04).
                05 REG-SEXO      PIC X(01).
+      ******************************************************************
+      *                     WORKING-STORAGE SECTION   
+      ******************************************************************
        WORKING-STORAGE SECTION.
-           01 WS-FECHA.
-               05 WS-D                 PIC 9(02).
-               05 WS-M                 PIC 9(02).
-               05 WS-A                 PIC 9(04).
-           77 WS-STATUS                PIC X(01).
-           77 WS-OLDER-PERSON          PIC X(01).
-           77 WS-KK                    PIC 9(05).
-           77 WS-AMOUNT-OCTOBER        PIC 9(05).
-           77 WS-AMOUNT-SPECIAL        PIC 9(05).
-           77 WS-AMOUNT-SPRING         PIC 9(05).
-           77 WS-ID-MAX-WEIGHT         PIC 9(05).
-           77 WS-PA-MAX-WEIGHT         PIC 9(02)V9.
-           77 WS-TOTAL-WEIGHT          PIC 9(04)V9.
+      ************************  CONSTANTS  *****************************
+
+      ************************** TABLES ********************************
+
+      **************************  SWITCHES  ****************************
+       01 WS-SWITCHES.       
+          05 FS-STATUS-FILE            PIC X(02) VALUE "00".
+             88 FS-STATUS-FILE-OK                VALUE "00".
+             88 FS-STATUS-FILE-EOF               VALUE "10".
+      ************************** VARIABLES *****************************
+       01 WS-VARIABLES.
+           05 WS-FECHA.
+               10 WS-D                 PIC 9(02).
+               10 WS-M                 PIC 9(02).
+               10 WS-A                 PIC 9(04).
+           05 WS-OLDER-PERSON          PIC X(01).
+           05 WS-AMOUNT-OCTOBER        PIC 9(05).
+           05 WS-AMOUNT-SPECIAL        PIC 9(05).
+           05 WS-AMOUNT-SPRING         PIC 9(05).
+           05 WS-ID-MAX-WEIGHT         PIC 9(05).
+           05 WS-PA-MAX-WEIGHT         PIC 9(02)V9.
+           05 WS-TOTAL-WEIGHT          PIC 9(04)V9.
+      ******************************************************************
+      *                       LINKAGE SECTION   
+      ****************************************************************** 
+       LINKAGE SECTION.        
+      ******************************************************************
+      *                      PROCEDURE DIVISION   
+      ****************************************************************** 
        PROCEDURE DIVISION.
-           OPEN INPUT DATOS
-       
-           PERFORM 20-LEER
-           THRU 20-LEER-F
-           MOVE "Y" TO WS-STATUS
-           
-           MOVE REG-DIA TO WS-D
-           MOVE REG-MES TO WS-M
-           MOVE REG-ANIO TO WS-A
-           MOVE REG-SEXO TO WS-OLDER-PERSON
-           
-           PERFORM 30-CALCULO
-           THRU 30-CALCULO-F
-           UNTIL WS-STATUS = "F"
-       
-           CLOSE DATOS
-
-           PERFORM 40-TOTALES
-              THRU 40-TOTALES-F
-           . 
-            STOP RUN.
-
-       20-LEER.
-           READ DATOS NEXT RECORD
-           AT END
-           MOVE "F" TO  WS-STATUS
+           PERFORM 100000-START                      
+              THRU 100000-START-F                    
+                                                  
+           PERFORM 200000-PROCESS                     
+              THRU 200000-PROCESS-F                   
+              UNTIL FS-STATUS-FILE-EOF                                        
+              
+           PERFORM 300000-END                         
+              THRU 300000-END-F
            .
-       20-LEER-F. EXIT.
+      ******************************************************************
+      *                         100000-START         
+      ******************************************************************
+       100000-START.
+           PERFORM 110000-OPEN-DATOS
+              THRU 110000-OPEN-DATOS-F                                 
 
-       30-CALCULO.
-           ADD 1 TO WS-KK
-           DISPLAY WS-KK
+           PERFORM 210000-READ-DATOS
+              THRU 210000-READ-DATOS-F
+
+           MOVE REG-DIA  TO WS-D
+           MOVE REG-MES  TO WS-M
+           MOVE REG-ANIO TO WS-A
+           MOVE REG-SEXO TO WS-OLDER-PERSON   
+           .                                      
+       100000-START-F. EXIT.
+      ******************************************************************
+      *                         110000-OPEN-DATOS   
+      ******************************************************************
+       110000-OPEN-DATOS.                        
+           OPEN INPUT DATOS                   
+           IF NOT FS-STATUS-FILE-OK
+               DISPLAY "ERROR AL ABRIR ARCHIVO DATOS " FS-STATUS-FILE
+           END-IF
+           .
+       110000-OPEN-DATOS-F. EXIT.        
+      ******************************************************************
+      *                         200000-PROCESS   
+      ****************************************************************** 
+       200000-PROCESS.
            IF REG-MES = 10
                ADD 1 TO WS-AMOUNT-OCTOBER
            END-IF
@@ -133,17 +177,57 @@
                    END-IF
                END-IF
            END-IF
-           
-           PERFORM 20-LEER
-           THRU 20-LEER-F
-           .
-       30-CALCULO-F. EXIT. 
 
-       40-TOTALES. 
+           PERFORM 210000-READ-DATOS
+              THRU 210000-READ-DATOS-F
+           .         
+       200000-PROCESS-F. EXIT.
+      ******************************************************************
+      *                         210000-READ-DATOS   
+      ******************************************************************      
+       210000-READ-DATOS.
+           INITIALIZE REG-DATOS
+           READ DATOS INTO REG-DATOS
+           EVALUATE TRUE
+               WHEN FS-STATUS-FILE-OK
+                    CONTINUE   
+               WHEN FS-STATUS-FILE-EOF
+                    CONTINUE
+           END-EVALUATE
+           .
+       210000-READ-DATOS-F. EXIT. 
+      ******************************************************************
+      *                         300000-END   
+      ****************************************************************** 
+       300000-END.
+           PERFORM 310000-CLOSE-DATOS
+              THRU 310000-CLOSE-DATOS-F
+           
+           PERFORM 320000-TOTAL
+              THRU 320000-TOTAL-F
+
+           STOP RUN 
+           .    
+       300000-END-F. EXIT.
+      ******************************************************************
+      *                         310000-CLOSE-DATOS   
+      ****************************************************************** 
+       310000-CLOSE-DATOS.
+           CLOSE DATOS
+           IF NOT FS-STATUS-FILE-OK
+               DISPLAY "ERROR AL CERRAR ARCHIVO DATOS " FS-STATUS-FILE
+           END-IF
+           .
+       310000-CLOSE-DATOS-F. EXIT. 
+      ******************************************************************
+      *                         320000-TOTAL   
+      ****************************************************************** 
+       320000-TOTAL.
            DISPLAY "TOTAL OF BIRTHS ON OCTOBER " WS-AMOUNT-OCTOBER                  
            DISPLAY "TOTAL SUBSECTION 2 " WS-AMOUNT-SPECIAL                  
            DISPLAY "TOTAL OF WOMEN's BIRTHS ON SPRING " WS-AMOUNT-SPRING                  
            DISPLAY "SEX'S OLDEST PERSON " WS-OLDER-PERSON                  
-           .           
-       40-TOTALES-F. EXIT.
+           .
+       320000-TOTAL-F. EXIT. 
+
        END PROGRAM E18.

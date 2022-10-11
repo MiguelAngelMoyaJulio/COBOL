@@ -22,7 +22,7 @@
       *                            FILES   
       ******************************************************************
       *****************************  INPUT  ****************************
-       SELECT MASTER ASSIGN TO "DATOS.txt"
+       SELECT MASTER ASSIGN TO "DAT.txt"
                      FILE STATUS IS FS-STATUS-FILE
                      ORGANIZATION IS LINE SEQUENTIAL. 
        
