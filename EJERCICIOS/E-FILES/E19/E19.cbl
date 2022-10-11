@@ -120,7 +120,7 @@
                05 FILLER               PIC X(10).            
                05 T-EX-MINUTES         PIC 9(05).
                05 FILLER               PIC X(03).            
-               05 T-BILLING            PIC ZZZ.ZZ.
+               05 T-BILLING            PIC ZZ9.99.
                05 FILLER               PIC X(02).            
       ******************************************************************
       *                       LINKAGE SECTION   
