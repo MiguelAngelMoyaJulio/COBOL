@@ -15,70 +15,76 @@
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. E25.
+       AUTHOR. MIGUEL MOYA.
+       DATE-WRITTEN. OCTOBER 2022.
+       DATE-COMPILED. OCTOBER 2022.
+      ******************************************************************
+      *                     ENVIRONMENT DIVISION
+      ****************************************************************** 
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+             DECIMAL-POINT IS COMMA.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
+      ******************************************************************
+      *                            FILES   
+      ******************************************************************
+      *****************************  INPUT  ****************************
+       
+      ****************************  OUTPUT  ****************************
        DATA DIVISION.
        FILE SECTION.
       ******************************************************************
       *                     WORKING-STORAGE SECTION   
-      ******************************************************************         
+      ******************************************************************
        WORKING-STORAGE SECTION.
-           01 WS-VAR.
-               02 WS-I                     PIC 9(03).
-               02 WS-Z                     PIC 9(03).
-               02 WS-J                     PIC 9(03).
-               02 WS-X                     PIC 9(03).
-               02 WS-SUMA                  PIC 9(03).
-               02 WS-MAX-FIL               PIC 9(03).
-               02 WS-PROMEDIO              PIC 9(03)V99.
-           01 WS-V1 OCCURS 3 TIMES.
-               02 WS-NUM1                  PIC 9(02) OCCURS 3 TIMES.                
-           01 WS-TITULO.
-               02 WS-T1                    PIC  X(04) VALUE "V1 [".                 
-               02 WS-I1                    PIC  9(02).                  
-               02 WS-F1                    PIC  X(05) VALUE "] -> ".                 
-               02 WS-VALOR1                PIC  X(02).                 
-               02 WS-T2                    PIC  X(07) VALUE " + V2 [".                 
-               02 WS-I2                    PIC  9(02).                  
-               02 WS-F2                    PIC  X(05) VALUE "] -> ".                 
-               02 WS-VALOR2                PIC  9(02).                 
-               02 WS-OP                    PIC  X(03) VALUE " = ".                 
-               02 WS-T-SUMA                PIC  9(03).
+      ************************  CONSTANTS  *****************************
+
+      ************************** TABLES ********************************
+       01 WST-MATRIZ.
+          05 WST-F OCCURS 3 TIMES.
+             10 WST-C OCCURS 3 TIMES.
+                15 WS-NUM1               PIC 9(02).
+      **************************  SWITCHES  ****************************
+      
+      ************************** VARIABLES *****************************
+       01 WS-VARIABLES.
+           02 WS-I                     PIC 9(03).
+           02 WS-J                     PIC 9(03).
+           02 WS-SUMA                  PIC 9(03).
+           02 WS-MAX-FIL               PIC 9(03).
+           02 WS-PROMEDIO              PIC 9(03)V99.
+      ******************************************************************
+      *                       LINKAGE SECTION   
+      ****************************************************************** 
+       LINKAGE SECTION.        
       ******************************************************************
       *                         PROCEDURE DIVISION   
       ******************************************************************                           
        PROCEDURE DIVISION.
            
-      *    PERFORM 10-INICIO
-      *       THRU 10-INICIO-F
+           PERFORM 100000-START
+              THRU 100000-START-F
            
-           PERFORM 20-PROCESO
-              THRU 20-PROCESO-F
+           PERFORM 200000-PROCESS
+              THRU 200000-PROCESS-F
            
-           PERFORM 30-FIN
-              THRU 30-FIN-F 
+           PERFORM 300000-END
+              THRU 300000-END-F 
            .
-            STOP RUN.
       ******************************************************************
-      *                         10-INICIO   
+      *                         100000-START   
       ******************************************************************      
-       10-INICIO.
-           DISPLAY "ASDASD"
+       100000-START.
+           PERFORM 110000-CARGAR-MATRIZ
+              THRU 110000-CARGAR-MATRIZ-F
            .
-       10-INICIO-F. EXIT.
+       100000-START-F. EXIT.
       ******************************************************************
-      *                         20-PROCESO   
-      ****************************************************************** 
-       20-PROCESO.  
-           PERFORM 20-CARGAR-MATRIZ
-              THRU 20-CARGAR-MATRIZ-F
-           .         
-       20-PROCESO-F. EXIT.
-      ******************************************************************
-      *                         20-CARGAR-MATRIZ   
+      *                         110000-CARGAR-MATRIZ   
       ******************************************************************      
-       20-CARGAR-MATRIZ.
+       110000-CARGAR-MATRIZ.
            PERFORM VARYING WS-I FROM 1 BY 1
            UNTIL WS-I > 3
                PERFORM VARYING WS-J FROM 1 BY 1
@@ -88,43 +94,25 @@
                END-PERFORM 
            END-PERFORM
            .
-       20-CARGAR-MATRIZ-F. EXIT.
+       110000-CARGAR-MATRIZ-F. EXIT.
       ******************************************************************
-      *                         30-FIN   
+      *                         200000-PROCESS   
       ****************************************************************** 
-       30-FIN.
-           PERFORM 30-MOSTRAR-MATRIZ
-               THRU 30-MOSTRAR-MATRIZ-F
+       200000-PROCESS.  
+           PERFORM 210000-PROMEDIO
+              THRU 210000-PROMEDIO-F
            
-           PERFORM 30-PROMEDIO
-              THRU 30-PROMEDIO-F
+           PERFORM 220000-SUMA-COL-HOMOLOGA
+              THRU 220000-SUMA-COL-HOMOLOGA-F
            
-           PERFORM 30-SUMA-COL-HOMOLOGA
-              THRU 30-SUMA-COL-HOMOLOGA-F
-           
-           PERFORM 30-MAX-FIL
-              THRU 30-MAX-FIL-F
-           .    
-       30-FIN-F. EXIT.
+           PERFORM 230000-MAX-FIL
+              THRU 230000-MAX-FIL-F
+           .         
+       200000-PROCESS-F. EXIT.
       ******************************************************************
-      *                         30-MOSTRAR-MATRIZ   
+      *                         210000-PROMEDIO   
       ****************************************************************** 
-       30-MOSTRAR-MATRIZ.
-           PERFORM VARYING WS-I FROM 1 BY 1
-           UNTIL WS-I > 3
-               PERFORM VARYING WS-J FROM 1 BY 1
-               UNTIL WS-J > 3
-                   DISPLAY " | " WS-NUM1(WS-I, WS-J) " | " 
-                           WITH NO ADVANCING
-               END-PERFORM
-               DISPLAY " " 
-           END-PERFORM
-           .    
-       30-MOSTRAR-MATRIZ-F. EXIT.
-      ******************************************************************
-      *                         30-PROMEDIO   
-      ****************************************************************** 
-       30-PROMEDIO.
+       210000-PROMEDIO.
            PERFORM VARYING WS-I FROM 1 BY 1
            UNTIL WS-I > 3
                PERFORM VARYING WS-J FROM 1 BY 1
@@ -135,11 +123,11 @@
            COMPUTE WS-PROMEDIO = WS-SUMA / 9
            DISPLAY "AVERAGE " WS-PROMEDIO
            .    
-       30-PROMEDIO-F. EXIT.
+       210000-PROMEDIO-F. EXIT.
       ******************************************************************
-      *                         30-SUMA-COL-HOMOLOGA   
+      *                         220000-SUMA-COL-HOMOLOGA   
       ****************************************************************** 
-       30-SUMA-COL-HOMOLOGA.
+       220000-SUMA-COL-HOMOLOGA.
            PERFORM VARYING WS-I FROM 1 BY 1
            UNTIL WS-I > 3
                INITIALIZE WS-SUMA
@@ -150,11 +138,11 @@
                DISPLAY "SUM COL " WS-I " " WS-SUMA
            END-PERFORM
            .    
-       30-SUMA-COL-HOMOLOGA-F. EXIT.
+       220000-SUMA-COL-HOMOLOGA-F. EXIT.
       ******************************************************************
-      *                         30-MAX-FIL   
+      *                         230000-MAX-FIL   
       ****************************************************************** 
-       30-MAX-FIL.
+       230000-MAX-FIL.
            PERFORM VARYING WS-I FROM 1 BY 1
            UNTIL WS-I > 3
                PERFORM VARYING WS-J FROM 1 BY 1
@@ -170,5 +158,30 @@
                DISPLAY "MAX FIL " WS-I " " WS-MAX-FIL
            END-PERFORM
            .    
-       30-MAX-FIL-F. EXIT.
+       230000-MAX-FIL-F. EXIT. 
+      ******************************************************************
+      *                         300000-END   
+      ****************************************************************** 
+       300000-END.
+           PERFORM 310000-MOSTRAR-MATRIZ
+              THRU 310000-MOSTRAR-MATRIZ-F
+
+           STOP RUN
+           .    
+       300000-END-F. EXIT.
+      ******************************************************************
+      *                         310000-MOSTRAR-MATRIZ   
+      ****************************************************************** 
+       310000-MOSTRAR-MATRIZ.
+           PERFORM VARYING WS-I FROM 1 BY 1
+           UNTIL WS-I > 3
+               PERFORM VARYING WS-J FROM 1 BY 1
+               UNTIL WS-J > 3
+                   DISPLAY " | " WS-NUM1(WS-I, WS-J) " | " 
+                           WITH NO ADVANCING
+               END-PERFORM
+               DISPLAY " " 
+           END-PERFORM
+           .    
+       310000-MOSTRAR-MATRIZ-F. EXIT.
        END PROGRAM E25.
