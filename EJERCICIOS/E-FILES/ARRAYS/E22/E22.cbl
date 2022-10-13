@@ -113,7 +113,13 @@
               THRU 110000-OPEN-DATOS1-F                                 
            
            PERFORM 120000-OPEN-DATOS2
-              THRU 120000-OPEN-DATOS2-F                                 
+              THRU 120000-OPEN-DATOS2-F
+              
+           PERFORM 210000-READ-DATOS1
+              THRU 210000-READ-DATOS1-F    
+           
+           PERFORM 220000-READ-DATOS2
+              THRU 220000-READ-DATOS2-F                                    
            .                                      
        100000-START-F. EXIT.
       ******************************************************************
