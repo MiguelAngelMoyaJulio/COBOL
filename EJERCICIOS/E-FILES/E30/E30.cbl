@@ -15,13 +15,27 @@
       ******************************************************************
        IDENTIFICATION DIVISION.
        PROGRAM-ID. E30.
+       AUTHOR. MIGUEL MOYA.
+       DATE-WRITTEN. OCTOBER 2022.
+       DATE-COMPILED. OCTOBER 2022.
+      ******************************************************************
+      *                     ENVIRONMENT DIVISION
+      ****************************************************************** 
        ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+             DECIMAL-POINT IS COMMA.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-       SELECT DATOS1
-       ASSIGN TO "TEMP.txt"
-       FILE STATUS IS FS-STATUS1
-       ORGANIZATION IS LINE SEQUENTIAL.
+      ******************************************************************
+      *                            FILES   
+      ******************************************************************
+      *****************************  INPUT  ****************************
+       SELECT DATOS1 ASSIGN TO "TEMP.txt"
+                     FILE STATUS IS FS-STATUS-FILE
+                     ORGANIZATION IS LINE SEQUENTIAL. 
+       
+      ****************************  OUTPUT  ****************************       
        DATA DIVISION.
        FILE SECTION.
        FD DATOS1.
@@ -31,105 +45,121 @@
       *                     WORKING-STORAGE SECTION   
       ******************************************************************        
        WORKING-STORAGE SECTION.
-           01 FS-STATUS1                    PIC X(02) VALUE "00".
-               88 FS-STATUS-OK                        VALUE "00".
-               88 FS-STATUS-EOF                       VALUE "10".
-           01 WS-VAR.
-               02 WS-TEMP-MAX              PIC 9(03)V9(02).
-               02 WS-TEMP-MIN-MEDIA        PIC 9(05)V9(02).
-               02 WS-TEMP-MIN-MEDIA-REF    PIC 9(05)V9(02).
-               02 WS-TEMP-MIN-MEDIA-POS    PIC 9(02).
-               02 WS-TEMP-MAX-MEDIA        PIC 9(05)V9(02).
-               02 WS-TEMP-MAX-MEDIA-REF    PIC 9(05)V9(02).
-               02 WS-TEMP-MAX-MEDIA-POS    PIC 9(02).
-               02 WS-I                     PIC 9(03).
-               02 WS-J                     PIC 9(03).
-               02 WS-X                     PIC 9(03).
-               02 WS-TOTE-MA               PIC ZZ,ZZZ,ZZZ.ZZ.
-           01 WS-TF OCCURS 31 TIMES.
-               02 WS-TC OCCURS 24 TIMES. 
-                   05 WS-TEMP              PIC 9(03)V9(02).    
-           01 WS-TITULO.
-               02 FILLER                   PIC X(03). 
-               02 T-PASAPORTE              PIC 9(06). 
-               02 FILLER                   PIC X(04). 
-               02 T-MONTO                  PIC  ZZ,ZZZ,ZZZ.ZZ.
+      ************************  CONSTANTS  *****************************
+
+      ************************** TABLES ********************************
+       01 WS-TF OCCURS 31 TIMES.
+           02 WS-TC OCCURS 24 TIMES. 
+              05 WS-TEMP              PIC 9(03)V9(02).    
+
+      **************************  SWITCHES  ****************************
+       01 FS-STATUS-FILE                    PIC X(02) VALUE "00".
+           88 FS-STATUS-FILE-OK                       VALUE "00".
+           88 FS-STATUS-FILE-EOF                      VALUE "10".
+
+      ************************** VARIABLES *****************************
+       01 WS-VAR.
+           02 WS-TEMP-MAX              PIC 9(03)V9(02).
+           02 WS-TEMP-MIN-MEDIA        PIC 9(05)V9(02).
+           02 WS-TEMP-MIN-MEDIA-REF    PIC 9(05)V9(02).
+           02 WS-TEMP-MIN-MEDIA-POS    PIC 9(02).
+           02 WS-TEMP-MAX-MEDIA        PIC 9(05)V9(02).
+           02 WS-TEMP-MAX-MEDIA-REF    PIC 9(05)V9(02).
+           02 WS-TEMP-MAX-MEDIA-POS    PIC 9(02).
+           02 WS-I                     PIC 9(03).
+           02 WS-J                     PIC 9(03).
+           02 WS-X                     PIC 9(03).
+           02 WS-TOTE-MA               PIC ZZ.ZZZ.ZZZ,ZZ.
+      ******************************************************************
+      *                       LINKAGE SECTION   
+      ****************************************************************** 
+       LINKAGE SECTION.
       ******************************************************************
       *                         PROCEDURE DIVISION   
       ******************************************************************        
        PROCEDURE DIVISION.
            
-           PERFORM 10-INICIO
-              THRU 10-INICIO-F
+           PERFORM 100000-START
+              THRU 100000-START-F
            
-           PERFORM 20-PROCESO
-              THRU 20-PROCESO-F
-              UNTIL FS-STATUS-EOF
+           PERFORM 200000-PROCESS
+              THRU 200000-PROCESS-F
+              UNTIL FS-STATUS-FILE-EOF
            
-           PERFORM 30-FIN
-              THRU 30-FIN-F
-
-           PERFORM 30-RESULTADOS
-              THRU 30-RESULTADOS-F   
+           PERFORM 300000-END
+              THRU 300000-END-F
            .
-            STOP RUN.
       ******************************************************************
-      *                         10-INICIO   
+      *                         100000-START   
       ******************************************************************      
-       10-INICIO.
-           PERFORM 10-ABRIR-DATOS1
-              THRU 10-ABRIR-DATOS1-F
+       100000-START.
+           PERFORM 110000-OPEN-DATOS1
+              THRU 110000-OPEN-DATOS1-F
 
-           PERFORM 20-LEER1
-              THRU 20-LEER1-F
+           PERFORM 210000-READ-DATOS1
+              THRU 210000-READ-DATOS1-F
            .
-       10-INICIO-F. EXIT.
+       100000-START-F. EXIT.
       ******************************************************************
-      *                         10-ABRIR-DATOS1   
+      *                         110000-OPEN-DATOS1   
       ******************************************************************     
-       10-ABRIR-DATOS1.
+       110000-OPEN-DATOS1.
            OPEN INPUT DATOS1
-           IF NOT FS-STATUS-OK
-               DISPLAY "ERROR AL ABRIR ARCHIVO " FS-STATUS1
+           IF NOT FS-STATUS-FILE-OK
+               DISPLAY "ERROR AL ABRIR ARCHIVO " FS-STATUS-FILE
            END-IF
            .
-       10-ABRIR-DATOS1-F. EXIT.
+       110000-OPEN-DATOS1-F. EXIT.
       ******************************************************************
-      *                         20-PROCESO   
+      *                         200000-PROCESS   
       ****************************************************************** 
-       20-PROCESO.
-           PERFORM 20-CARGAR-MATRIZ
-              THRU 20-CARGAR-MATRIZ-F
+       200000-PROCESS.
+           PERFORM 220000-CARGAR-MATRIZ
+              THRU 220000-CARGAR-MATRIZ-F
 
-           PERFORM 20-TEMP-MAXIMA
-              THRU 20-TEMP-MAXIMA-F
+           PERFORM 230000-TEMP-MAXIMA
+              THRU 230000-TEMP-MAXIMA-F
 
-           PERFORM 20-TEMP-MIN-MEDIA
-              THRU 20-TEMP-MIN-MEDIA-F   
+           PERFORM 240000-TEMP-MIN-MEDIA
+              THRU 240000-TEMP-MIN-MEDIA-F   
 
-           PERFORM 20-TEMP-MAX-MEDIA
-              THRU 20-TEMP-MAX-MEDIA-F
+           PERFORM 250000-TEMP-MAX-MEDIA
+              THRU 250000-TEMP-MAX-MEDIA-F
            .         
-       20-PROCESO-F. EXIT.
+       200000-PROCESS-F. EXIT.
       ******************************************************************
-      *                         20-CARGAR-MATRIZ   
+      *                         210000-READ-DATOS1   
+      ******************************************************************      
+       210000-READ-DATOS1.
+           INITIALIZE REG-DATOS1
+           READ DATOS1 INTO REG-DATOS1
+           EVALUATE TRUE
+               WHEN FS-STATUS-FILE-OK
+                    CONTINUE
+               WHEN FS-STATUS-FILE-EOF
+                    CONTINUE
+           END-EVALUATE
+           .
+       210000-READ-DATOS1-F. EXIT. 
+      ******************************************************************
+      *                         220000-CARGAR-MATRIZ   
       ****************************************************************** 
-       20-CARGAR-MATRIZ.
+       220000-CARGAR-MATRIZ.
            PERFORM VARYING WS-I FROM 1
            BY 1 UNTIL WS-I > 31
                PERFORM VARYING WS-J FROM 1
                BY 1 UNTIL WS-J > 24
                      MOVE REG-TEMP TO WS-TEMP (WS-I, WS-J)                                            
-                     PERFORM 20-LEER1                                            
-                        THRU 20-LEER1-F
+                     PERFORM 210000-READ-DATOS1                                            
+                        THRU 210000-READ-DATOS1-F
                END-PERFORM 
            END-PERFORM                                               
            .         
-       20-CARGAR-MATRIZ-F. EXIT.
+       220000-CARGAR-MATRIZ-F. EXIT.
       ******************************************************************
-      *                         20-TEMP-MAXIMA   
+      *                         230000-TEMP-MAXIMA   
       ****************************************************************** 
-       20-TEMP-MAXIMA.
+       230000-TEMP-MAXIMA.
            MOVE 1 TO WS-X
            PERFORM VARYING WS-I FROM 1
            BY 1 UNTIL WS-I > 31
@@ -145,11 +175,11 @@
                END-PERFORM 
            END-PERFORM                                               
            .         
-       20-TEMP-MAXIMA-F. EXIT.
+       230000-TEMP-MAXIMA-F. EXIT.
       ******************************************************************
-      *                         20-TEMP-MIN-MEDIA   
+      *                         240000-TEMP-MIN-MEDIA   
       ****************************************************************** 
-       20-TEMP-MIN-MEDIA.
+       240000-TEMP-MIN-MEDIA.
            MOVE 1 TO WS-X
            PERFORM VARYING WS-I FROM 1
            BY 1 UNTIL WS-I > 31
@@ -170,11 +200,11 @@
                    END-IF
            END-PERFORM                                               
            .         
-       20-TEMP-MIN-MEDIA-F. EXIT.
+       240000-TEMP-MIN-MEDIA-F. EXIT.
       ******************************************************************
-      *                         20-TEMP-MAX-MEDIA   
+      *                         250000-TEMP-MAX-MEDIA   
       ****************************************************************** 
-       20-TEMP-MAX-MEDIA.
+       250000-TEMP-MAX-MEDIA.
            MOVE 1 TO WS-X
            PERFORM VARYING WS-J FROM 1
            BY 1 UNTIL WS-J > 24
@@ -195,33 +225,35 @@
                    END-IF
            END-PERFORM                                               
            .         
-       20-TEMP-MAX-MEDIA-F. EXIT.
+       250000-TEMP-MAX-MEDIA-F. EXIT.
+      
       ******************************************************************
-      *                         20-LEER1   
-      ******************************************************************      
-       20-LEER1.
-           INITIALIZE REG-DATOS1
-           READ DATOS1 INTO REG-DATOS1
-           EVALUATE TRUE
-               WHEN FS-STATUS-OK
-                    CONTINUE
-               WHEN FS-STATUS-EOF
-                    CONTINUE
-           END-EVALUATE
-           .
-       20-LEER1-F. EXIT.
-      ******************************************************************
-      *                         30-FIN   
+      *                         300000-END   
       ****************************************************************** 
-       30-FIN.
-           PERFORM 30-CERRAR-DATOS1
-              THRU 30-CERRAR-DATOS1-F
+       300000-END.
+           PERFORM 310000-CLOSE-DATOS1
+              THRU 310000-CLOSE-DATOS1-F
+           
+           PERFORM 330000-RESULTADOS
+              THRU 330000-RESULTADOS-F
+           
+           STOP RUN
            .    
-       30-FIN-F. EXIT.
+       300000-END-F. EXIT.
       ******************************************************************
-      *                         30-MOSTRAR-MATRIZ   
+      *                         310000-CLOSE-DATOS1   
       ****************************************************************** 
-       30-MOSTRAR-MATRIZ.
+       310000-CLOSE-DATOS1.
+           CLOSE DATOS1
+           IF NOT FS-STATUS-FILE-OK
+               DISPLAY "ERROR AL CERRAR ARCHIVO " FS-STATUS-FILE
+           END-IF
+           .
+       310000-CLOSE-DATOS1-F. EXIT.
+      ******************************************************************
+      *                         320000-MOSTRAR-MATRIZ   
+      ****************************************************************** 
+       320000-MOSTRAR-MATRIZ.
            PERFORM VARYING WS-I FROM 1
            BY 1 UNTIL WS-I > 31
                 PERFORM VARYING WS-J FROM 1
@@ -230,26 +262,16 @@
                 END-PERFORM           
            END-PERFORM       
            .    
-       30-MOSTRAR-MATRIZ-F. EXIT.
+       320000-MOSTRAR-MATRIZ-F. EXIT.
       ******************************************************************
-      *                         30-RESULTADOS   
+      *                         330000-RESULTADOS   
       ****************************************************************** 
-       30-RESULTADOS.
+       330000-RESULTADOS.
            DISPLAY "TEMPETARUTA MAXIMA " WS-TEMP-MAX
            DISPLAY "DIA TEMPETARUTA MEDIA MINIMA " 
                    WS-TEMP-MIN-MEDIA-POS
            DISPLAY "HORA TEMPETARUTA MEDIA MAXIMA " 
                    WS-TEMP-MAX-MEDIA-POS
            .    
-       30-RESULTADOS-F. EXIT.
-      ******************************************************************
-      *                         30-CERRAR-DATOS1   
-      ****************************************************************** 
-       30-CERRAR-DATOS1.
-           CLOSE DATOS1
-           IF NOT FS-STATUS-OK
-               DISPLAY "ERROR AL CERRAR ARCHIVO " FS-STATUS1
-           END-IF
-           .
-       30-CERRAR-DATOS1-F. EXIT.
+       330000-RESULTADOS-F. EXIT.
        END PROGRAM E30.
