@@ -31,6 +31,10 @@
              DECIMAL-POINT IS COMMA.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
+      ******************************************************************
+      *                            FILES   
+      ******************************************************************
+      *****************************  INPUT  ****************************
        SELECT MASTER ASSIGN TO "MASTER.txt"
                      FILE STATUS IS FS-STATUS1
                      ORGANIZATION IS LINE SEQUENTIAL.
@@ -38,7 +42,7 @@
        SELECT NEWS ASSIGN TO "NEWS.txt"
                      FILE STATUS IS FS-STATUS2
                      ORGANIZATION IS LINE SEQUENTIAL.
-       
+      ****************************  OUTPUT  **************************** 
        SELECT MASTER-UPDATE ASSIGN TO "MASTER_UPDATE.txt"
                      FILE STATUS IS FS-STATUS3
                      ORGANIZATION IS LINE SEQUENTIAL.
@@ -65,6 +69,10 @@
       *                     WORKING-STORAGE SECTION   
       ******************************************************************
        WORKING-STORAGE SECTION.
+      ************************  CONSTANTS  *****************************
+
+      ************************** TABLES ********************************
+
       **************************  SWITCHES  ****************************
        01 WS-SWITCHES.       
           05 FS-STATUS1                    PIC X(02) VALUE "00".
@@ -77,7 +85,7 @@
              88 FS-STATUS3-OK                        VALUE "00".
              88 FS-STATUS3-EOF                       VALUE "10".
       ************************** VARIABLES *****************************
-       01 WS-VAR.
+       01 WS-VARIABLES.
           02 WS-MEDIDOR-ANT                PIC 9(02).
           02 WS-MATING.
              05 WS-CODE-M                  PIC 9(02).
@@ -101,6 +109,9 @@
           02 SUB-CLIENT               PIC 9(04). 
           02 FILLER                   PIC X(05) VALUE SPACES. 
           02 SUB-DEUDA                PIC --.--9,99. 
+      ******************************************************************
+      *                       LINKAGE SECTION   
+      ******************************************************************
        LINKAGE SECTION.        
       ******************************************************************
       *                         PROCEDURE DIVISION   
@@ -116,7 +127,6 @@
            PERFORM 300000-END                         
               THRU 300000-END-F   
            .                                      
-            STOP RUN.                             
       ******************************************************************
       *                         100000-START         
       ******************************************************************
@@ -299,6 +309,7 @@
               
            PERFORM 330000-CLOSE-MASTER-UPDATE
               THRU 330000-CLOSE-MASTER-UPDATE-F
+           STOP RUN
            .    
        300000-END-F. EXIT.
       ******************************************************************
