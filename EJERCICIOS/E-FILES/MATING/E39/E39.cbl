@@ -39,6 +39,10 @@
              DECIMAL-POINT IS COMMA.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
+      ******************************************************************
+      *                            FILES   
+      ******************************************************************
+      *****************************  INPUT  **************************** 
        SELECT MASTER ASSIGN TO "MASTER.txt"
                      FILE STATUS IS FS-STATUS1
                      ORGANIZATION IS LINE SEQUENTIAL.
@@ -46,7 +50,7 @@
        SELECT NEWS ASSIGN TO "NEWS.txt"
                      FILE STATUS IS FS-STATUS2
                      ORGANIZATION IS LINE SEQUENTIAL.
-       
+      ****************************  OUTPUT  **************************** 
        SELECT MASTER-UPDATE ASSIGN TO "MASTER_UPDATE.txt"
                      FILE STATUS IS FS-STATUS3
                      ORGANIZATION IS LINE SEQUENTIAL.
@@ -78,6 +82,8 @@
        01 WS-CON.       
           05 WS-CON-1                 PIC 9(01) VALUE 1.
           05 WS-CON-AVALIABLE         PIC X(09) VALUE "AVALIABLE".
+      ************************** TABLES ********************************
+      
       **************************  SWITCHES  ****************************
        01 WS-SWITCHES.       
           05 FS-STATUS1               PIC X(02) VALUE "00".
@@ -109,6 +115,9 @@
           02 SUB-SEAT                 PIC X(02). 
           02 FILLER                   PIC X(07) VALUE SPACES. 
           02 SUB-NAME                 PIC X(09). 
+      ******************************************************************
+      *                       LINKAGE SECTION   
+      ******************************************************************    
        LINKAGE SECTION.        
       ******************************************************************
       *                         PROCEDURE DIVISION   
@@ -124,7 +133,6 @@
            PERFORM 300000-END                         
               THRU 300000-END-F   
            .                                      
-            STOP RUN.                             
       ******************************************************************
       *                         100000-START         
       ******************************************************************
@@ -295,6 +303,7 @@
 
            PERFORM 340000-TOTALS
               THRU 340000-TOTALS-F   
+           STOP RUN   
            .    
        300000-END-F. EXIT.
       ******************************************************************
