@@ -7,7 +7,7 @@
       *                     IDENTIFICATION DIVISION
       ******************************************************************
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. EJE009V4.
+       PROGRAM-ID.     E40.
        AUTHOR. MIGUEL MOYA.
        DATE-WRITTEN. OCTOBER 2022.
        DATE-COMPILED. OCTOBER 2022.
@@ -200,4 +200,4 @@
            END-PERFORM
            .
        310000-MOSTRAR-MATRIZ-F. EXIT.
-       END PROGRAM EJE009V4.      
+       END PROGRAM     E40.      
