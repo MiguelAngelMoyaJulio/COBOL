@@ -3,7 +3,7 @@
       * datos:
       *1.	Día de nacimiento (2 dígitos)
       *2.	Mes (2 dígitos)
-      *3.	Año (4 dígitos)
+       *3.	Año (4 dígitos)
       *4.	Sexo ('M'=masculino, 'F'=femenino)
       *Con estos datos de cada habitante se forma un lote, 
       *finalizado su ingreso con un día igual a 0.
@@ -54,7 +54,26 @@
       ******************************************************************
        WORKING-STORAGE SECTION.
       ************************  CONSTANTS  *****************************
-
+       01 WS-CONSTANTES.
+           02 CON-RUTINAS.
+              05 CON-RUTINA01  PIC X(08) VALUE 'RUTINA01'.
+           02 CON-PARRAFO.
+              05 CON-110000-OPEN-DATOS      PIC X(30) VALUE 
+              '110000-OPEN-DATOS           '.
+              05 CON-210000-READ-DATOS      PIC X(30) VALUE 
+              '210000-READ-DATOS           '.
+              05 CON-310000-CLOSE-DATOS      PIC X(30) VALUE 
+              '310000-CLOSE-DATOS          '.
+           02 CON-OPERACIONES.
+              05 CON-ABRIR     PIC X(15) VALUE 'ABRIR          '.
+              05 CON-LEER      PIC X(15) VALUE 'LEER           '.
+              05 CON-CERRAR    PIC X(15) VALUE 'CERRAR         '.
+              05 CON-GRABAR    PIC X(15) VALUE 'GRABAR         '.
+              05 CON-RUTINA    PIC X(15) VALUE 'LLAMAR RUTINA  '.
+           02 CON-OBJETOS.
+              05 CON-DATOS     PIC X(10) VALUE 'DATOS   '.
+           02 CON-OTROS.
+              05 CON-1         PIC 9(01) VALUE 1.
       ************************** TABLES ********************************
 
       **************************  SWITCHES  ****************************
@@ -75,6 +94,12 @@
            05 WS-ID-MAX-WEIGHT         PIC 9(05).
            05 WS-PA-MAX-WEIGHT         PIC 9(02)V9.
            05 WS-TOTAL-WEIGHT          PIC 9(04)V9.
+
+       01 WS-ERRORES.
+           05 WS-ERR-PARRAFO            PIC X(30).
+           05 WS-ERR-OBJETO             PIC X(10).
+           05 WS-ERR-OPERACION          PIC X(15).
+           05 WS-ERR-CODIGO             PIC 9(02).    
       ******************************************************************
       *                       LINKAGE SECTION   
       ****************************************************************** 
@@ -115,7 +140,12 @@
        110000-OPEN-DATOS.                        
            OPEN INPUT DATOS                   
            IF NOT FS-STATUS-FILE-OK
-               DISPLAY "ERROR AL ABRIR ARCHIVO DATOS " FS-STATUS-FILE
+              MOVE CON-110000-OPEN-DATOS   TO WS-ERR-PARRAFO 
+              MOVE CON-DATOS               TO WS-ERR-OBJETO 
+              MOVE CON-ABRIR               TO WS-ERR-OPERACION 
+              MOVE FS-STATUS-FILE          TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F
            END-IF
            .
        110000-OPEN-DATOS-F. EXIT.        
@@ -193,6 +223,13 @@
                     CONTINUE   
                WHEN FS-STATUS-FILE-EOF
                     CONTINUE
+               WHEN OTHER
+                    MOVE CON-210000-READ-DATOS   TO WS-ERR-PARRAFO 
+                    MOVE CON-DATOS               TO WS-ERR-OBJETO 
+                    MOVE CON-LEER                TO WS-ERR-OPERACION 
+                    MOVE FS-STATUS-FILE          TO WS-ERR-CODIGO
+                    PERFORM 399999-END-PROGRAM
+                       THRU 399999-END-PROGRAM-F
            END-EVALUATE
            .
        210000-READ-DATOS-F. EXIT. 
@@ -215,7 +252,12 @@
        310000-CLOSE-DATOS.
            CLOSE DATOS
            IF NOT FS-STATUS-FILE-OK
-               DISPLAY "ERROR AL CERRAR ARCHIVO DATOS " FS-STATUS-FILE
+              MOVE CON-310000-CLOSE-DATOS   TO WS-ERR-PARRAFO 
+              MOVE CON-DATOS                TO WS-ERR-OBJETO 
+              MOVE CON-CERRAR               TO WS-ERR-OPERACION 
+              MOVE FS-STATUS-FILE           TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F
            END-IF
            .
        310000-CLOSE-DATOS-F. EXIT. 
@@ -229,5 +271,18 @@
            DISPLAY "SEX'S OLDEST PERSON " WS-OLDER-PERSON                  
            .
        320000-TOTAL-F. EXIT. 
-
+      ******************************************************************
+      *                         399999-END-PROGRAM   
+      ******************************************************************
+       399999-END-PROGRAM.
+           DISPLAY "***************************************************"
+           DISPLAY "*              SE PRODUJO UN ERROR                *"
+           DISPLAY "***************************************************"
+           DISPLAY "PARRAFO : "   WS-ERR-PARRAFO
+           DISPLAY "OBJETO : "    WS-ERR-OBJETO
+           DISPLAY "OPERACION : " WS-ERR-OPERACION
+           DISPLAY "CODIGO : "    WS-ERR-CODIGO
+           STOP RUN
+           .
+       399999-END-PROGRAM-F. EXIT. 
        END PROGRAM E18.

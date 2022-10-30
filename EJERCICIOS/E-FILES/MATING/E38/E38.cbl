@@ -76,7 +76,40 @@
       ******************************************************************
        WORKING-STORAGE SECTION.
       ************************  CONSTANTS  *****************************
-
+       01 WS-CONSTANTES.
+           02 CON-RUTINAS.
+              05 CON-RUTINA01  PIC X(08) VALUE 'RUTINA01'.
+           02 CON-PARRAFO.
+              05 CON-110000-OPEN-MASTER       PIC X(30) VALUE 
+              '110000-OPEN-MASTER          '.
+              05 CON-120000-OPEN-NEWS          PIC X(30) VALUE 
+              '120000-OPEN-NEWS            '.
+              05 CON-130000-OPEN-MASTER-UPDATE PIC X(30) VALUE 
+              '130000-OPEN-MASTER-UPDATE   '.
+              05 CON-210000-READ-MASTER      PIC X(30) VALUE 
+              '210000-READ-MASTER          '.
+              05 CON-220000-READ-NEWS      PIC X(30) VALUE 
+              '220000-READ-NEWS            '.
+              05 CON-230000-WRITE-MASTER-UPDATE  PIC X(30) VALUE 
+              '230000-WRITE-MASTER-UPDATE  '.
+              05 CON-310000-CLOSE-MASTER      PIC X(30) VALUE 
+              '310000-CLOSE-MASTER         '.
+              05 CON-320000-CLOSE-NEWS      PIC X(30) VALUE 
+              '320000-CLOSE-NEWS           '.
+              05 CON-330000-CLOSE-MASTER-UPDATE      PIC X(30) VALUE 
+              '330000-CLOSE-MASTER-UPDATE  '.
+           02 CON-OPERACIONES.
+              05 CON-ABRIR     PIC X(15) VALUE 'ABRIR          '.
+              05 CON-LEER      PIC X(15) VALUE 'LEER           '.
+              05 CON-CERRAR    PIC X(15) VALUE 'CERRAR         '.
+              05 CON-GRABAR    PIC X(15) VALUE 'GRABAR         '.
+              05 CON-RUTINA    PIC X(15) VALUE 'LLAMAR RUTINA  '.
+           02 CON-OBJETOS.
+              05 CON-MASTER           PIC X(10) VALUE 'MASTER  '.
+              05 CON-NEWS             PIC X(10) VALUE 'NEWS    '.
+              05 CON-MASTER-UPDATE    PIC X(10) VALUE 'MASTERUP'.
+           02 CON-OTROS.
+              05 CON-1         PIC 9(01) VALUE 1.
       ************************** TABLES ******************************** 
 
       **************************  SWITCHES  ****************************
@@ -119,7 +152,13 @@
           02 FILLER                   PIC X(02) VALUE SPACES. 
           02 SUB-BALANCE              PIC -.---.--9,99. 
           02 FILLER                   PIC X(05) VALUE SPACES. 
-          02 SUB-OBSERVATIONS         PIC X(01). 
+          02 SUB-OBSERVATIONS         PIC X(01).
+
+       01 WS-ERRORES.
+           05 WS-ERR-PARRAFO            PIC X(30).
+           05 WS-ERR-OBJETO             PIC X(10).
+           05 WS-ERR-OPERACION          PIC X(15).
+           05 WS-ERR-CODIGO             PIC 9(02).    
       ******************************************************************
       *                       LINKAGE SECTION   
       ****************************************************************** 
@@ -166,7 +205,12 @@
        110000-OPEN-MASTER.                        
            OPEN INPUT MASTER                   
            IF NOT FS-STATUS1-OK
-               DISPLAY "ERROR AL ABRIR ARCHIVO MAESTRO " FS-STATUS1
+              MOVE CON-110000-OPEN-MASTER    TO WS-ERR-PARRAFO 
+              MOVE CON-MASTER                TO WS-ERR-OBJETO 
+              MOVE CON-ABRIR                 TO WS-ERR-OPERACION 
+              MOVE FS-STATUS1                TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F
            END-IF
            .
        110000-OPEN-MASTER-F. EXIT.
@@ -176,7 +220,12 @@
        120000-OPEN-NEWS.                        
            OPEN INPUT NEWS                   
            IF NOT FS-STATUS2-OK
-               DISPLAY "ERROR AL ABRIR ARCHIVO MAESTRO " FS-STATUS2
+              MOVE CON-120000-OPEN-NEWS    TO WS-ERR-PARRAFO 
+              MOVE CON-NEWS                TO WS-ERR-OBJETO 
+              MOVE CON-ABRIR               TO WS-ERR-OPERACION 
+              MOVE FS-STATUS2              TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F
            END-IF
            .
        120000-OPEN-NEWS-F. EXIT.
@@ -186,8 +235,12 @@
        130000-OPEN-MASTER-UPDATE.                        
            OPEN OUTPUT MASTER-UPDATE                   
            IF NOT FS-STATUS3-OK
-               DISPLAY "ERROR AL ABRIR ARCHIVO MASTER UPDATE " 
-                       FS-STATUS3
+              MOVE CON-130000-OPEN-MASTER-UPDATE TO WS-ERR-PARRAFO 
+              MOVE CON-MASTER-UPDATE             TO WS-ERR-OBJETO 
+              MOVE CON-ABRIR                     TO WS-ERR-OPERACION 
+              MOVE FS-STATUS3                    TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F
            END-IF
            .
        130000-OPEN-MASTER-UPDATE-F. EXIT.
@@ -260,6 +313,13 @@
                     MOVE REG-ACCOUNT TO WS-CODE-M
                WHEN FS-STATUS1-EOF
                     MOVE 99          TO WS-CODE-M
+               WHEN OTHER
+                    MOVE CON-210000-READ-MASTER TO WS-ERR-PARRAFO 
+                    MOVE CON-MASTER             TO WS-ERR-OBJETO 
+                    MOVE CON-LEER               TO WS-ERR-OPERACION 
+                    MOVE FS-STATUS1             TO WS-ERR-CODIGO
+                    PERFORM 399999-END-PROGRAM
+                       THRU 399999-END-PROGRAM-F     
            END-EVALUATE
            .
        210000-READ-MASTER-F. EXIT.
@@ -274,6 +334,13 @@
                     MOVE REG-ACCOUNT-N TO WS-CODE-N
                WHEN FS-STATUS2-EOF
                     MOVE 99            TO WS-CODE-N
+               WHEN OTHER
+                    MOVE CON-220000-READ-NEWS TO WS-ERR-PARRAFO 
+                    MOVE CON-NEWS             TO WS-ERR-OBJETO 
+                    MOVE CON-LEER             TO WS-ERR-OPERACION 
+                    MOVE FS-STATUS2           TO WS-ERR-CODIGO
+                    PERFORM 399999-END-PROGRAM
+                       THRU 399999-END-PROGRAM-F     
            END-EVALUATE
            .
        220000-READ-NEWS-F. EXIT.
@@ -288,7 +355,12 @@
            
            WRITE REG-MASTER-UPDATE
            IF NOT FS-STATUS3-OK
-               DISPLAY "ERROR AL GRABAR MAESTRO-UPDATE" FS-STATUS3
+              MOVE CON-230000-WRITE-MASTER-UPDATE TO WS-ERR-PARRAFO 
+              MOVE CON-MASTER-UPDATE              TO WS-ERR-OBJETO 
+              MOVE CON-GRABAR                     TO WS-ERR-OPERACION 
+              MOVE FS-STATUS3                     TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F
            END-IF 
            .
        230000-WRITE-MASTER-UPDATE-F. EXIT.
@@ -332,7 +404,12 @@
        310000-CLOSE-MASTER.
            CLOSE MASTER
            IF NOT FS-STATUS1-OK
-               DISPLAY "ERROR AL CERRAR ARCHIVO MASTER " FS-STATUS1
+              MOVE CON-310000-CLOSE-MASTER TO WS-ERR-PARRAFO 
+              MOVE CON-MASTER              TO WS-ERR-OBJETO 
+              MOVE CON-CERRAR              TO WS-ERR-OPERACION 
+              MOVE FS-STATUS1              TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F
            END-IF
            .
        310000-CLOSE-MASTER-F. EXIT.
@@ -342,7 +419,12 @@
        320000-CLOSE-NEWS.
            CLOSE NEWS
            IF NOT FS-STATUS2-OK
-               DISPLAY "ERROR AL CERRAR ARCHIVO NEWS " FS-STATUS2
+              MOVE CON-320000-CLOSE-NEWS TO WS-ERR-PARRAFO 
+              MOVE CON-NEWS              TO WS-ERR-OBJETO 
+              MOVE CON-CERRAR            TO WS-ERR-OPERACION 
+              MOVE FS-STATUS2            TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F
            END-IF
            .
        320000-CLOSE-NEWS-F. EXIT.
@@ -352,8 +434,12 @@
        330000-CLOSE-MASTER-UPDATE.
            CLOSE MASTER-UPDATE
            IF NOT FS-STATUS3-OK
-               DISPLAY "ERROR AL CERRAR ARCHIVO MASTER-UPDATE " 
-                       FS-STATUS3
+              MOVE CON-330000-CLOSE-MASTER-UPDATE TO WS-ERR-PARRAFO 
+              MOVE CON-MASTER-UPDATE              TO WS-ERR-OBJETO 
+              MOVE CON-CERRAR                     TO WS-ERR-OPERACION 
+              MOVE FS-STATUS3                     TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F
            END-IF
            .
        330000-CLOSE-MASTER-UPDATE-F. EXIT.
@@ -366,4 +452,18 @@
            DISPLAY "ACCOUNT : " WS-MIN-ACCOUNT
            .
        340000-TOTALS-F. EXIT.
+      ******************************************************************
+      *                         399999-END-PROGRAM   
+      ******************************************************************
+       399999-END-PROGRAM.
+           DISPLAY "***************************************************"
+           DISPLAY "*              SE PRODUJO UN ERROR                *"
+           DISPLAY "***************************************************"
+           DISPLAY "PARRAFO : "   WS-ERR-PARRAFO
+           DISPLAY "OBJETO : "    WS-ERR-OBJETO
+           DISPLAY "OPERACION : " WS-ERR-OPERACION
+           DISPLAY "CODIGO : "    WS-ERR-CODIGO
+           STOP RUN
+           .
+       399999-END-PROGRAM-F. EXIT.  
        END PROGRAM E38.

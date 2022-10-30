@@ -29,15 +29,15 @@
       *                            FILES   
       ******************************************************************
       *****************************  INPUT  ****************************
-       SELECT DATOS1 ASSIGN TO "LOTE.txt"
+       SELECT DATOS ASSIGN TO "LOTE.txt"
                      FILE STATUS IS FS-STATUS-FILE
                      ORGANIZATION IS LINE SEQUENTIAL. 
        
       ****************************  OUTPUT  ****************************
        DATA DIVISION.
        FILE SECTION.
-       FD DATOS1.
-          01 REG-DATOS1.
+       FD DATOS.
+          01 REG-DATOS.
              05 REG-LEGAJO                         PIC 9(02).
              05 REG-MATERIA                        PIC 9(02).
              05 REG-NOTA                           PIC 9(02)V9(02).
@@ -46,7 +46,26 @@
       ******************************************************************
        WORKING-STORAGE SECTION.
       ************************  CONSTANTS  *****************************
-
+       01 WS-CONSTANTES.
+           02 CON-RUTINAS.
+              05 CON-RUTINA01  PIC X(08) VALUE 'RUTINA01'.
+           02 CON-PARRAFO.
+              05 CON-110000-OPEN-DATOS      PIC X(30) VALUE 
+              '110000-OPEN-DATOS           '.
+              05 CON-210000-READ-DATOS      PIC X(30) VALUE 
+              '210000-READ-DATOS           '.
+              05 CON-310000-CLOSE-DATOS      PIC X(30) VALUE 
+              '310000-CLOSE-DATOS          '.
+           02 CON-OPERACIONES.
+              05 CON-ABRIR     PIC X(15) VALUE 'ABRIR          '.
+              05 CON-LEER      PIC X(15) VALUE 'LEER           '.
+              05 CON-CERRAR    PIC X(15) VALUE 'CERRAR         '.
+              05 CON-GRABAR    PIC X(15) VALUE 'GRABAR         '.
+              05 CON-RUTINA    PIC X(15) VALUE 'LLAMAR RUTINA  '.
+           02 CON-OBJETOS.
+              05 CON-DATOS     PIC X(10) VALUE 'DATOS   '.
+           02 CON-OTROS.
+              05 CON-1         PIC 9(01) VALUE 1.
       ************************** TABLES ********************************
 
       **************************  SWITCHES  **************************** 
@@ -61,6 +80,11 @@
           02 WS-MATERIA-MAX             PIC 9(02).
           02 WS-I                       PIC 9(01).
           02 WS-MONTO                   PIC ZZZ,ZZ.
+       01 WS-ERRORES.
+           05 WS-ERR-PARRAFO            PIC X(30).
+           05 WS-ERR-OBJETO             PIC X(10).
+           05 WS-ERR-OPERACION          PIC X(15).
+           05 WS-ERR-CODIGO             PIC 9(02).   
       ******************************************************************
       *                       LINKAGE SECTION   
       ****************************************************************** 
@@ -84,37 +108,49 @@
       *                         100000-START         
       ******************************************************************
        100000-START.                                 
-           PERFORM 110000-OPEN-DATOS1                
-              THRU 110000-OPEN-DATOS1-F
+           PERFORM 110000-OPEN-DATOS                
+              THRU 110000-OPEN-DATOS-F
                             
-           PERFORM 210000-READ-DATOS1                       
-              THRU 210000-READ-DATOS1-F                     
+           PERFORM 210000-READ-DATOS                       
+              THRU 210000-READ-DATOS-F                     
            .                                      
        100000-START-F. EXIT.                         
       ******************************************************************
-      *                         110000-OPEN-DATOS1   
+      *                         110000-OPEN-DATOS   
       ******************************************************************
-       110000-OPEN-DATOS1.                        
-           OPEN INPUT DATOS1                   
+       110000-OPEN-DATOS.                        
+           OPEN INPUT DATOS                   
            IF NOT FS-STATUS-FILE-OK
-               DISPLAY "ERROR AL ABRIR ARCHIVO " FS-STATUS-FILE
+              MOVE CON-110000-OPEN-DATOS   TO WS-ERR-PARRAFO 
+              MOVE CON-DATOS               TO WS-ERR-OBJETO 
+              MOVE CON-ABRIR               TO WS-ERR-OPERACION 
+              MOVE FS-STATUS-FILE          TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F
            END-IF
            .
-       110000-OPEN-DATOS1-F. EXIT.
+       110000-OPEN-DATOS-F. EXIT.
       ******************************************************************
-      *                         210000-READ-DATOS1   
+      *                         210000-READ-DATOS   
       ******************************************************************      
-       210000-READ-DATOS1.
-           INITIALIZE REG-DATOS1
-           READ DATOS1 INTO REG-DATOS1
+       210000-READ-DATOS.
+           INITIALIZE REG-DATOS
+           READ DATOS INTO REG-DATOS
            EVALUATE TRUE
                WHEN FS-STATUS-FILE-OK
                     CONTINUE
                WHEN FS-STATUS-FILE-EOF
                     CONTINUE
+               WHEN OTHER
+                    MOVE CON-210000-READ-DATOS   TO WS-ERR-PARRAFO 
+                    MOVE CON-DATOS               TO WS-ERR-OBJETO 
+                    MOVE CON-LEER                TO WS-ERR-OPERACION 
+                    MOVE FS-STATUS-FILE          TO WS-ERR-CODIGO
+                    PERFORM 399999-END-PROGRAM
+                       THRU 399999-END-PROGRAM-F     
            END-EVALUATE
            .
-       210000-READ-DATOS1-F. EXIT.
+       210000-READ-DATOS-F. EXIT.
       ******************************************************************
       *                         200000-PROCESS   
       ****************************************************************** 
@@ -141,8 +177,8 @@
              COMPUTE WS-CANTIDAD-MATERIAS = WS-CANTIDAD-MATERIAS + 1
              MOVE REG-NOTA TO WS-MONTO
              DISPLAY REG-MATERIA "                 " WS-MONTO
-             PERFORM 210000-READ-DATOS1
-                THRU 210000-READ-DATOS1-F   
+             PERFORM 210000-READ-DATOS
+                THRU 210000-READ-DATOS-F   
            END-PERFORM
            DISPLAY "MATERIAS CURSADAS : " WS-CANTIDAD-MATERIAS
            MOVE WS-NOTA-MAX TO WS-MONTO
@@ -155,19 +191,38 @@
       *                         300000-END   
       ****************************************************************** 
        300000-END.
-           PERFORM 30-CERRAR-DATOS1
-              THRU 30-CERRAR-DATOS1-F
+           PERFORM 30-CERRAR-DATOS
+              THRU 30-CERRAR-DATOS-F
            STOP RUN   
            .    
        300000-END-F. EXIT.
       ******************************************************************
-      *                         30-CERRAR-DATOS1   
+      *                         30-CERRAR-DATOS   
       ****************************************************************** 
-       30-CERRAR-DATOS1.
-           CLOSE DATOS1
+       30-CERRAR-DATOS.
+           CLOSE DATOS
            IF NOT FS-STATUS-FILE-OK
-               DISPLAY "ERROR AL CERRAR ARCHIVO " FS-STATUS-FILE
+              MOVE CON-310000-CLOSE-DATOS   TO WS-ERR-PARRAFO 
+              MOVE CON-DATOS                TO WS-ERR-OBJETO 
+              MOVE CON-CERRAR               TO WS-ERR-OPERACION 
+              MOVE FS-STATUS-FILE           TO WS-ERR-CODIGO
+              PERFORM 399999-END-PROGRAM
+                 THRU 399999-END-PROGRAM-F 
            END-IF
            .
-       30-CERRAR-DATOS1-F. EXIT.
+       30-CERRAR-DATOS-F. EXIT.
+      ******************************************************************
+      *                         399999-END-PROGRAM   
+      ******************************************************************
+       399999-END-PROGRAM.
+           DISPLAY "***************************************************"
+           DISPLAY "*              SE PRODUJO UN ERROR                *"
+           DISPLAY "***************************************************"
+           DISPLAY "PARRAFO : "   WS-ERR-PARRAFO
+           DISPLAY "OBJETO : "    WS-ERR-OBJETO
+           DISPLAY "OPERACION : " WS-ERR-OPERACION
+           DISPLAY "CODIGO : "    WS-ERR-CODIGO
+           STOP RUN
+           .
+       399999-END-PROGRAM-F. EXIT. 
        END PROGRAM E35.
