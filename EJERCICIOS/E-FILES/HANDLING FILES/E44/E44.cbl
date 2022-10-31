@@ -77,8 +77,6 @@
              88 FS-STATUS-OK                   VALUE "00".
              88 FS-STATUS-EOF                  VALUE "10".
       ************************** VARIABLES *****************************
-       01 WS-VARIABLES.
-          02 WS-OPCION PIC X(01).
        01 WSV-AST.   
            02 FILLER PIC X(01) VALUE "*".   
            02 FILLER PIC X(12) VALUE ALL "_".   
